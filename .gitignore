@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+data/
+caches/
+environments/
+outputs/
+*.npy
+*.safetensors
+*.log
+!results/**/source_tests.log
+!results/**/evaluation_tests.log
+paths.local.yaml

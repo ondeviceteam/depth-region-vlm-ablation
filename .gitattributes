@@ -1,0 +1,6 @@
+# CSV writers use standard CRLF record endings; preserve artifact bytes.
+*.csv whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+# Matplotlib preserves whitespace inside SVG path data.
+*.svg -whitespace
+# Preserve upstream context whitespace in reproducible patch artifacts.
+*.patch -whitespace
