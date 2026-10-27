@@ -1,0 +1,74 @@
+Please install pyav to use video processing functions.
+OpenCLIP not installed
+Loaded LLaVA model: /dev/shm/rintern01-v5-count200-131000/tosa-official/huggingface/hub/models--lmms-lab--llava-onevision-qwen2-7b-ov/snapshots/0b07bf7565e244cf4f39982249eafe8cd799d6dd
+You are using a model of type llava to instantiate a model of type llava_qwen. This is not supported for all configurations of models and can yield errors.
+Overwriting config with {'image_aspect_ratio': None, 'tome': '2D', 'visual_token_merge_ratio': 1.0, 'mm_vision_tower': 'google/siglip-so400m-patch14-384'}
+Loading vision tower: google/siglip-so400m-patch14-384
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:06<00:19,  6.65s/it]Loading checkpoint shards:  50%|█████     | 2/4 [00:12<00:12,  6.30s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:18<00:06,  6.12s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:19<00:00,  4.06s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:19<00:00,  4.88s/it]
+Model Class: LlavaQwenForCausalLM
+The attention mask is not set and cannot be inferred from input because pad token is same as eos token. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+PREFLIGHT_PASS gqa_2D_shard3of4
+PROGRESS gqa_2D_shard3of4 1 3144
+PROGRESS gqa_2D_shard3of4 51 3144
+PROGRESS gqa_2D_shard3of4 101 3144
+PROGRESS gqa_2D_shard3of4 151 3144
+PROGRESS gqa_2D_shard3of4 201 3144
+PROGRESS gqa_2D_shard3of4 251 3144
+PROGRESS gqa_2D_shard3of4 301 3144
+PROGRESS gqa_2D_shard3of4 351 3144
+PROGRESS gqa_2D_shard3of4 401 3144
+PROGRESS gqa_2D_shard3of4 451 3144
+PROGRESS gqa_2D_shard3of4 501 3144
+PROGRESS gqa_2D_shard3of4 551 3144
+PROGRESS gqa_2D_shard3of4 601 3144
+PROGRESS gqa_2D_shard3of4 651 3144
+PROGRESS gqa_2D_shard3of4 701 3144
+PROGRESS gqa_2D_shard3of4 751 3144
+PROGRESS gqa_2D_shard3of4 801 3144
+PROGRESS gqa_2D_shard3of4 851 3144
+PROGRESS gqa_2D_shard3of4 901 3144
+PROGRESS gqa_2D_shard3of4 951 3144
+PROGRESS gqa_2D_shard3of4 1001 3144
+PROGRESS gqa_2D_shard3of4 1051 3144
+PROGRESS gqa_2D_shard3of4 1101 3144
+PROGRESS gqa_2D_shard3of4 1151 3144
+PROGRESS gqa_2D_shard3of4 1201 3144
+PROGRESS gqa_2D_shard3of4 1251 3144
+PROGRESS gqa_2D_shard3of4 1301 3144
+PROGRESS gqa_2D_shard3of4 1351 3144
+PROGRESS gqa_2D_shard3of4 1401 3144
+PROGRESS gqa_2D_shard3of4 1451 3144
+PROGRESS gqa_2D_shard3of4 1501 3144
+PROGRESS gqa_2D_shard3of4 1551 3144
+PROGRESS gqa_2D_shard3of4 1601 3144
+PROGRESS gqa_2D_shard3of4 1651 3144
+PROGRESS gqa_2D_shard3of4 1701 3144
+PROGRESS gqa_2D_shard3of4 1751 3144
+PROGRESS gqa_2D_shard3of4 1801 3144
+PROGRESS gqa_2D_shard3of4 1851 3144
+PROGRESS gqa_2D_shard3of4 1901 3144
+PROGRESS gqa_2D_shard3of4 1951 3144
+PROGRESS gqa_2D_shard3of4 2001 3144
+PROGRESS gqa_2D_shard3of4 2051 3144
+PROGRESS gqa_2D_shard3of4 2101 3144
+PROGRESS gqa_2D_shard3of4 2151 3144
+PROGRESS gqa_2D_shard3of4 2201 3144
+PROGRESS gqa_2D_shard3of4 2251 3144
+PROGRESS gqa_2D_shard3of4 2301 3144
+PROGRESS gqa_2D_shard3of4 2351 3144
+PROGRESS gqa_2D_shard3of4 2401 3144
+PROGRESS gqa_2D_shard3of4 2451 3144
+PROGRESS gqa_2D_shard3of4 2501 3144
+PROGRESS gqa_2D_shard3of4 2551 3144
+PROGRESS gqa_2D_shard3of4 2601 3144
+PROGRESS gqa_2D_shard3of4 2651 3144
+PROGRESS gqa_2D_shard3of4 2701 3144
+PROGRESS gqa_2D_shard3of4 2751 3144
+PROGRESS gqa_2D_shard3of4 2801 3144
+PROGRESS gqa_2D_shard3of4 2851 3144
+PROGRESS gqa_2D_shard3of4 2901 3144
+PROGRESS gqa_2D_shard3of4 2951 3144
+PROGRESS gqa_2D_shard3of4 3001 3144
+PROGRESS gqa_2D_shard3of4 3051 3144
+PROGRESS gqa_2D_shard3of4 3101 3144
+COMPLETE gqa_2D_shard3of4 40872

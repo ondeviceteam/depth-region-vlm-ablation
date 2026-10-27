@@ -58,8 +58,10 @@ def bootstrap(delta, seed=20261028, replicates=10000):
 
 
 def write(path, rows):
+    if not rows:
+        return
     with path.open('w', newline='') as f:
-        w = csv.DictWriter(f, fieldnames=list(rows[0]))
+        w = csv.DictWriter(f, fieldnames=list(dict.fromkeys(k for r in rows for k in r)))
         w.writeheader()
         w.writerows(rows)
 
@@ -78,7 +80,14 @@ def main():
             key = (r['method'], r['nominal_keep_ratio'], r['run'])
             qid = str(r['question_id'])
             assert qid not in cells[key], ('duplicate', key, qid)
-            cells[key][qid] = dict(score(dataset, r, questions[qid]), status=r['status'])
+            cells[key][qid] = dict(score(dataset, r, questions[qid]), status=r['status'], raw=r['raw_response'])
+        if not cells:
+            print('no rows yet for', dataset)
+            continue
+        expected = {(m, k, run) for m in METHODS for k in ([1.0] if m == 'Dense' else keeps)
+                    for run in range(PROTOCOL['repeats'] if dataset == 'vqav2_count'
+                                     and (m == 'Dense' or k == PROTOCOL['repeat_keep']) else 1)}
+        assert set(cells) == expected, ('conditions', dataset, sorted(expected ^ set(cells)))
         for key, cell in cells.items():
             assert set(cell) == set(questions), ('incomplete', dataset, key, len(cell), len(questions))
         primary = 'vqa_accuracy' if dataset == 'vqav2_count' else 'exact_match'
@@ -118,11 +127,11 @@ def main():
                 keep = 1.0 if method == 'Dense' else PROTOCOL['repeat_keep']
                 runs = sorted(k[2] for k in cells if k[0] == method and k[1] == keep)
                 scores = [100 * np.mean([cells[(method, keep, r)][i][primary] for i in ids]) for r in runs]
-                agree = np.mean([len({json.dumps(cells[(method, keep, r)][i], sort_keys=True) for r in runs}) == 1 for i in ids])
+                agree = np.mean([len({cells[(method, keep, r)][i]['raw'] for r in runs}) == 1 for i in ids])
                 repeats.append(dict(method=method, nominal_keep_ratio=keep, runs=len(runs),
                                     vqa_accuracy_runs=' / '.join(f'{s:.2f}' for s in scores),
                                     vqa_accuracy_range=round(max(scores) - min(scores), 2),
-                                    identical_score_rate=round(100 * agree, 2)))
+                                    identical_answer_rate=round(100 * agree, 2)))
     write(out / 'summary.csv', summary)
     write(out / 'paired_differences.csv', paired)
     write(out / 'gqa_by_type.csv', by_type)

@@ -1,0 +1,6 @@
+method,nominal_keep_ratio,runs,vqa_accuracy_runs,vqa_accuracy_range,identical_answer_rate
+Dense,1.0,3,76.50 / 76.50 / 76.50,0.0,100.0
+ToMe,0.5,3,54.59 / 55.58 / 54.16,1.42,81.7
+ToSA,0.5,3,62.87 / 62.39 / 62.75,0.48,85.2
+Depth-only,0.5,3,67.09 / 67.09 / 67.09,0.0,100.0
+Depth-RGB,0.5,3,66.08 / 66.08 / 66.08,0.0,100.0

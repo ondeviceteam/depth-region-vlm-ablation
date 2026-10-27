@@ -1,0 +1,51 @@
+{
+ "tag": "vqav2_count_3D_shard0of1",
+ "started_utc": "2026-10-27T15:33:20.296018+00:00",
+ "host": "ece-agpu5",
+ "gpu": "GPU-58e27bb8-6ee4-6920-934e-3cda615bb144",
+ "gpu_name": "NVIDIA A100-SXM4-80GB",
+ "pbs_job_id": "131000.ECE-util1",
+ "python": "3.11.15 (main, Jun 23 2026, 15:19:43) [Clang 22.1.3 ]",
+ "packages": {
+  "torch": "2.7.1+cu128",
+  "transformers": "4.44.2",
+  "numpy": "2.2.6",
+  "pillow": "11.3.0"
+ },
+ "protocol_sha256": "57dfa095ae12ea57d31c7c0fa756b3de3f095847052bc3e73dec0321e10bda5b",
+ "conditions": [
+  [
+   "ToSA",
+   0.75,
+   0
+  ],
+  [
+   "ToSA",
+   0.5,
+   0
+  ],
+  [
+   "ToSA",
+   0.5,
+   1
+  ],
+  [
+   "ToSA",
+   0.5,
+   2
+  ],
+  [
+   "ToSA",
+   0.25,
+   0
+  ],
+  [
+   "ToSA",
+   0.1,
+   0
+  ]
+ ],
+ "questions": 1000,
+ "finished_utc": "2026-10-27T16:03:40.722698+00:00",
+ "new_rows": 6000
+}
