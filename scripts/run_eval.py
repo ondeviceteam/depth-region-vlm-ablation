@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Run every method and merge strength on one shard of a manifest.
 
-One worker loads one encoder variant of the official ToSA LLaVA-OneVision-7B
-path: `2D` (official ToMe encoder) serves Token merge 없음, ToMe, Depth-only and
+One worker loads one encoder variant of the official ToSA LLaVA-OneVision path
+for the model fixed in the experiment's protocol.json: `2D` (official ToMe encoder) serves Token merge 없음, ToMe, Depth-only and
 Depth-RGB; `3D` (official ToSA encoder) serves ToSA. Rows are appended to a
 jsonl file and finished (condition, question) pairs are skipped on restart.
 Scoring is done afterwards by summarize.py.
@@ -24,7 +24,6 @@ from PIL import Image
 import torch
 
 ROOT = Path(__file__).resolve().parents[1]
-PROTOCOL = ROOT / 'experiments/2026-10-28_7b_vqav2_gqa/protocol.json'
 
 
 def sha(path):
@@ -53,6 +52,7 @@ def conditions(variant, dataset, keeps, repeat_keep, repeats):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument('--experiment', required=True, help='directory name under experiments/')
     ap.add_argument('--dataset', choices=['vqav2_count', 'gqa'], required=True)
     ap.add_argument('--variant', choices=['2D', '3D'], required=True)
     ap.add_argument('--shard', type=int, required=True)
@@ -64,7 +64,8 @@ def main():
     ap.add_argument('--runtime', type=Path, required=True)
     ap.add_argument('--output', type=Path, required=True)
     args = ap.parse_args()
-    protocol = json.loads(PROTOCOL.read_text())
+    protocol_path = ROOT / 'experiments' / args.experiment / 'protocol.json'
+    protocol = json.loads(protocol_path.read_text())
     spec = protocol['datasets'][args.dataset]
     assert sha(ROOT / spec['manifest']) == spec['manifest_sha256']
     for rel, digest in protocol['harness_sha256'].items():
@@ -193,7 +194,7 @@ def main():
                        gpu=os.environ.get('CUDA_VISIBLE_DEVICES'), gpu_name=torch.cuda.get_device_name(0),
                        pbs_job_id=os.environ.get('PBS_JOBID'), python=sys.version,
                        packages={p: importlib.metadata.version(p) for p in ['torch', 'transformers', 'numpy', 'pillow']},
-                       protocol_sha256=sha(PROTOCOL), conditions=todo_conditions, questions=len(questions))
+                       protocol_sha256=sha(protocol_path), conditions=todo_conditions, questions=len(questions))
     (args.output / f'{tag}_environment.json').write_text(json.dumps(environment, indent=1) + '\n')
 
     # Preflight: token counts for every condition and r=0 identity of the Depth connection.

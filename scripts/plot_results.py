@@ -5,6 +5,7 @@ and one figure per method showing all metrics.
 usage: python scripts/plot_results.py RESULTS_DIR FIGURE_DIR
 """
 import csv
+import json
 import sys
 from pathlib import Path
 
@@ -31,6 +32,10 @@ def curve(rows, dataset, method, metric):
     return [0.0] + [x for x, _ in points], [float(base[metric])] + [y for _, y in points]
 
 
+MODEL_NAMES = {'lmms-lab/llava-onevision-qwen2-7b-ov': 'LLaVA-OneVision-7B',
+               'lmms-lab/llava-onevision-qwen2-0.5b-ov': 'LLaVA-OneVision-0.5B'}
+
+
 def finish(ax, fig, rows, ylabel, title, path):
     strengths = sorted({(int(r['merged_tokens']), int(r['remaining_tokens'])) for r in rows})
     ax.set_xticks([100 * m / 729 for m, _ in strengths])
@@ -47,21 +52,24 @@ def finish(ax, fig, rows, ylabel, title, path):
 
 
 def main():
-    rows = list(csv.DictReader((Path(sys.argv[1]) / 'summary.csv').open()))
+    results = Path(sys.argv[1]).resolve()
+    rows = list(csv.DictReader((results / 'summary.csv').open()))
+    protocol = json.loads((Path(__file__).resolve().parents[1] / 'experiments' / results.name / 'protocol.json').read_text())
+    model = MODEL_NAMES[protocol['model']]
     out = Path(sys.argv[2])
     out.mkdir(parents=True, exist_ok=True)
     for method in METHODS:
         fig, ax = plt.subplots(figsize=(7, 4.5))
         for (dataset, metric), (label, color, m) in METRICS.items():
             ax.plot(*curve(rows, dataset, method, metric), color=color, marker=m, lw=1.8, ms=6, label=label)
-        finish(ax, fig, rows, '점수 (%)', f'LLaVA-OneVision-7B · {method}', out / f'method_{method.lower()}.png')
+        finish(ax, fig, rows, '점수 (%)', f'{model} · {method}', out / f'method_{method.lower()}.png')
     for dataset, metric, title, name in FIGURES:
         base = next(r for r in rows if r['dataset'] == dataset and r['method'] == 'Dense')
         fig, ax = plt.subplots(figsize=(7, 4.5))
         ax.axhline(float(base[metric]), color='gray', ls='--', lw=1, label='Token merge 없음')
         for method, (color, marker) in METHODS.items():
             ax.plot(*curve(rows, dataset, method, metric), color=color, marker=marker, lw=1.8, ms=6, label=method)
-        finish(ax, fig, rows, f'{title.split(" · ")[1]} (%)', f'LLaVA-OneVision-7B · {title}', out / name)
+        finish(ax, fig, rows, f'{title.split(" · ")[1]} (%)', f'{model} · {title}', out / name)
 
 
 if __name__ == '__main__':

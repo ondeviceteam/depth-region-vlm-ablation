@@ -11,23 +11,24 @@ from collections import defaultdict
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from summarize import PROTOCOL, ROOT, score  # noqa: E402
+from summarize import ROOT, load_protocol, score  # noqa: E402
 
 METHODS = ['Dense', 'ToMe', 'ToSA', 'Depth-only', 'Depth-RGB']
 
 
 def main():
     out = Path(sys.argv[1]).resolve()
+    protocol = load_protocol(out)
     rows = [json.loads(line) for p in sorted((out / 'raw').glob('*.jsonl')) for line in p.read_text().splitlines()]
     cells = defaultdict(dict)
     for r in rows:
         if r['run'] == 0:
             cells[(r['dataset'], r['method'], r['nominal_keep_ratio'])][str(r['question_id'])] = r
     result = []
-    for dataset, spec in PROTOCOL['datasets'].items():
+    for dataset, spec in protocol['datasets'].items():
         questions = {str(q['question_id']): q for q in json.loads((ROOT / spec['manifest']).read_text())['evaluation']}
         metric = 'vqa_accuracy' if dataset == 'vqav2_count' else 'exact_match'
-        for keep in PROTOCOL['keep_settings']:
+        for keep in protocol['keep_settings']:
             # Depth-only and Depth-RGB share the same constraints, so their feasible sets are identical.
             feasible = sorted(q for q, r in cells[(dataset, 'Depth-only', keep)].items() if r['status'] == 'PASS')
             assert feasible == sorted(q for q, r in cells[(dataset, 'Depth-RGB', keep)].items() if r['status'] == 'PASS')

@@ -2,7 +2,8 @@
 """Score saved answers and write the result tables. No inference is run.
 
 usage: python scripts/summarize.py RESULTS_DIR
-RESULTS_DIR contains raw/*.jsonl written by run_eval.py.
+RESULTS_DIR (results/<experiment>) contains raw/*.jsonl written by run_eval.py; the protocol is
+read from experiments/<experiment>/protocol.json.
 """
 import csv
 import json
@@ -17,7 +18,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from counting_rca import parse_count, score_count  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
-PROTOCOL = json.loads((ROOT / 'experiments/2026-10-28_7b_vqav2_gqa/protocol.json').read_text())
 METHODS = ['Dense', 'ToMe', 'ToSA', 'Depth-only', 'Depth-RGB']
 COMPARISONS = [('Depth-RGB', 'ToSA'), ('Depth-only', 'ToSA'), ('Depth-RGB', 'ToMe'), ('Depth-only', 'ToMe'), ('ToSA', 'ToMe')]
 NUMBER_WORDS = {'zero': '0', 'one': '1', 'two': '2', 'three': '3', 'four': '4', 'five': '5',
@@ -51,6 +51,10 @@ def score(dataset, row, q):
                 tosa_rule=float(ok and first.strip() != '' and first.lower() in q['answer'].lower()))
 
 
+def load_protocol(results_dir):
+    return json.loads((ROOT / 'experiments' / Path(results_dir).resolve().name / 'protocol.json').read_text())
+
+
 def bootstrap(delta, seed=20261028, replicates=10000):
     index = np.random.default_rng(seed).integers(0, len(delta), (replicates, len(delta)))
     boot = delta[index].mean(1)
@@ -68,10 +72,11 @@ def write(path, rows):
 
 def main():
     out = Path(sys.argv[1]).resolve()
+    protocol = load_protocol(out)
     rows = [json.loads(line) for p in sorted((out / 'raw').glob('*.jsonl')) for line in p.read_text().splitlines()]
-    keeps = PROTOCOL['keep_settings']
+    keeps = protocol['keep_settings']
     summary, paired, by_type, repeats = [], [], [], []
-    for dataset, spec in PROTOCOL['datasets'].items():
+    for dataset, spec in protocol['datasets'].items():
         questions = {str(q['question_id']): q for q in json.loads((ROOT / spec['manifest']).read_text())['evaluation']}
         cells = defaultdict(dict)
         for r in rows:
@@ -85,15 +90,15 @@ def main():
             print('no rows yet for', dataset)
             continue
         expected = {(m, k, run) for m in METHODS for k in ([1.0] if m == 'Dense' else keeps)
-                    for run in range(PROTOCOL['repeats'] if dataset == 'vqav2_count'
-                                     and (m == 'Dense' or k == PROTOCOL['repeat_keep']) else 1)}
+                    for run in range(protocol['repeats'] if dataset == 'vqav2_count'
+                                     and (m == 'Dense' or k == protocol['repeat_keep']) else 1)}
         assert set(cells) == expected, ('conditions', dataset, sorted(expected ^ set(cells)))
         for key, cell in cells.items():
             assert set(cell) == set(questions), ('incomplete', dataset, key, len(cell), len(questions))
         primary = 'vqa_accuracy' if dataset == 'vqav2_count' else 'exact_match'
         metrics = ['vqa_accuracy', 'rca', 'numeric_em'] if dataset == 'vqav2_count' else ['exact_match', 'tosa_rule']
         ids = sorted(questions)
-        strength = PROTOCOL['merge_strength']
+        strength = protocol['merge_strength']
         for method in METHODS:
             for keep in ([1.0] if method == 'Dense' else keeps):
                 cell = cells[(method, keep, 0)]
@@ -124,7 +129,7 @@ def main():
                                        difference_pp=round(d, 2), ci95_low=round(lo, 2), ci95_high=round(hi, 2), n=len(use)))
         if dataset == 'vqav2_count':
             for method in METHODS:
-                keep = 1.0 if method == 'Dense' else PROTOCOL['repeat_keep']
+                keep = 1.0 if method == 'Dense' else protocol['repeat_keep']
                 runs = sorted(k[2] for k in cells if k[0] == method and k[1] == keep)
                 scores = [100 * np.mean([cells[(method, keep, r)][i][primary] for i in ids]) for r in runs]
                 agree = np.mean([len({cells[(method, keep, r)][i]['raw'] for r in runs}) == 1 for i in ids])
