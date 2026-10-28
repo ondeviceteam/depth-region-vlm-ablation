@@ -1,0 +1,9 @@
+dataset,nominal_keep_ratio,metric,feasible,n,Dense,ToMe,ToSA,Depth-only,Depth-RGB
+vqav2_count,0.75,vqa_accuracy,1000,1000,62.13,46.26,52.56,60.69,61.0
+vqav2_count,0.5,vqa_accuracy,999,1000,62.09,46.44,51.3,57.91,56.74
+vqav2_count,0.25,vqa_accuracy,950,1000,62.64,47.65,52.57,51.77,52.16
+vqav2_count,0.1,vqa_accuracy,450,1000,59.51,47.24,46.89,42.6,41.42
+gqa,0.75,exact_match,12578,12578,52.46,50.25,50.49,52.13,51.97
+gqa,0.5,exact_match,12529,12578,52.5,49.71,50.23,50.75,50.69
+gqa,0.25,exact_match,12121,12578,52.75,48.5,48.81,48.57,48.67
+gqa,0.1,exact_match,5741,12578,53.46,46.86,47.29,45.01,44.56

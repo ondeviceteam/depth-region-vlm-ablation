@@ -1,0 +1,20 @@
+Please install pyav to use video processing functions.
+OpenCLIP not installed
+Loaded LLaVA model: /dev/shm/rintern01-v5-count200-131000/tosa-official/huggingface/hub/models--lmms-lab--llava-onevision-qwen2-0.5b-ov/snapshots/381d9947148efb1e58a577f451c05705ceec666e
+You are using a model of type llava to instantiate a model of type llava_qwen. This is not supported for all configurations of models and can yield errors.
+Overwriting config with {'image_aspect_ratio': None, 'tome': '2D', 'visual_token_merge_ratio': 1.0, 'mm_vision_tower': 'google/siglip-so400m-patch14-384'}
+Loading vision tower: google/siglip-so400m-patch14-384
+Model Class: LlavaQwenForCausalLM
+The attention mask is not set and cannot be inferred from input because pad token is same as eos token. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+PREFLIGHT_PASS vqav2_count_2D_shard0of2
+PROGRESS vqav2_count_2D_shard0of2 1 500
+PROGRESS vqav2_count_2D_shard0of2 51 500
+PROGRESS vqav2_count_2D_shard0of2 101 500
+PROGRESS vqav2_count_2D_shard0of2 151 500
+PROGRESS vqav2_count_2D_shard0of2 201 500
+PROGRESS vqav2_count_2D_shard0of2 251 500
+PROGRESS vqav2_count_2D_shard0of2 301 500
+PROGRESS vqav2_count_2D_shard0of2 351 500
+PROGRESS vqav2_count_2D_shard0of2 401 500
+PROGRESS vqav2_count_2D_shard0of2 451 500
+COMPLETE vqav2_count_2D_shard0of2 10500

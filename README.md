@@ -1,21 +1,30 @@
 # Depth Region VLM 실험
 
-VLM 비전 인코더 안에서 시각 토큰을 합칠 때 **깊이(depth) 영역 정보**를 쓰면 정확도를 덜 잃는지 비교한 실험입니다. 실험 조건은 추론 전에 [protocol](experiments/2026-10-28_7b_vqav2_gqa/protocol.json)에 고정했고, 결과를 본 뒤 바꾸지 않았습니다.
+VLM 비전 인코더 안에서 시각 토큰을 합칠 때 **깊이(depth) 영역 정보**를 쓰면 정확도를 덜 잃는지 비교한 실험입니다. 실험 조건은 추론 전에 protocol([7B](experiments/2026-10-28_7b_vqav2_gqa/protocol.json), [0.5B](experiments/2026-10-28_0.5b_vqav2_gqa/protocol.json))에 고정했고, 결과를 본 뒤 바꾸지 않았습니다.
 
 ## 요약
 
-같은 문항끼리 비교한 95% 신뢰구간(paired bootstrap)으로 판단했습니다.
+같은 문항끼리 비교한 95% 신뢰구간(paired bootstrap)으로 판단했습니다. 두 모델에서 경향이 같습니다. 병합이 적을 때는 Depth 방법이 ToSA보다 높고, 병합이 많아지면 ToSA가 앞섭니다.
+
+### LLaVA-OneVision-7B
 
 - **VQAv2 counting, 156개·338개 병합:** Depth-only와 Depth-RGB가 ToSA보다 높습니다. 156개 병합에서는 VQA accuracy가 9~10%p 높습니다(신뢰구간 +6.7~+12.9%p). 338개 병합에서는 3~4%p 높습니다(Depth-RGB +3.21%p [+0.37, +6.19], Depth-only +4.22%p [+1.31, +7.26]).
 - **VQAv2 counting, 520개·650개 병합:** ToSA가 가장 높습니다. 520개 병합에서 Depth-RGB는 ToSA보다 3.77%p 낮습니다 [−6.77, −0.73]. Depth-only와 ToSA의 차이(−2.49%p [−5.47, +0.52])는 불확실합니다. 650개 병합에서는 Depth 방법이 55%의 문항에서 실행 불가가 되어 30%p 넘게 낮습니다.
 - **GQA:** 156개 병합에서만 Depth-only가 ToSA보다 0.65%p 높습니다 [+0.13, +1.18]. Depth-RGB와 ToSA의 차이(+0.44%p [−0.07, +0.96])는 불확실합니다. 338개 병합에서는 모든 방법의 차이가 불확실합니다. 520개 병합부터는 Depth 방법이 낮습니다.
 - **ToSA와 ToMe:** VQAv2 counting에서는 모든 병합 강도에서 ToSA가 4~8%p 높습니다. GQA에서는 모든 병합 강도에서 차이가 불확실합니다.
 
+### LLaVA-OneVision-0.5B
+
+- **VQAv2 counting, 156개·338개 병합:** Depth-only와 Depth-RGB가 ToSA보다 높습니다. 156개 병합에서는 VQA accuracy가 8.1~8.4%p 높습니다(신뢰구간 +5.3~+11.3%p). 338개 병합에서는 5~7%p 높습니다(Depth-RGB +5.33%p [+2.26, +8.40], Depth-only +6.50%p [+3.62, +9.40]).
+- **VQAv2 counting, 520개·650개 병합:** ToSA가 가장 높습니다. 520개 병합에서 Depth 방법과 ToSA의 차이는 불확실합니다(Depth-RGB −2.45%p [−5.28, +0.47], Depth-only −2.82%p [−5.84, +0.21]). 650개 병합에서는 Depth 방법이 55%의 문항에서 실행 불가가 되어 약 30%p 낮습니다.
+- **GQA:** 156개 병합에서 Depth-only(+1.64%p [+1.11, +2.17])와 Depth-RGB(+1.48%p [+0.94, +2.04]) 모두 ToSA보다 높습니다. 338개 병합에서는 Depth 방법과 ToSA의 차이가 불확실합니다. 520개 병합부터는 Depth 방법이 낮습니다.
+- **ToSA와 ToMe:** VQAv2 counting에서는 156~520개 병합에서 ToSA가 4.6~6.3%p 높고, 650개 병합에서는 차이가 불확실합니다(+0.81%p [−1.29, +2.90]). GQA에서는 338개 병합에서만 ToSA가 0.52%p 높고 [+0.03, +1.03], 나머지는 불확실합니다.
+
 ## 실험 조건
 
 | 항목 | 내용 |
 |---|---|
-| 모델 | LLaVA-OneVision-7B ([ToSA 공식 저장소](https://github.com/hsiangwei0903/ToSA)의 실행 경로, 384×384 이미지 한 장 → 시각 토큰 729개) |
+| 모델 | LLaVA-OneVision-7B, LLaVA-OneVision-0.5B ([ToSA 공식 저장소](https://github.com/hsiangwei0903/ToSA)의 실행 경로, 384×384 이미지 한 장 → 시각 토큰 729개) |
 | 벤치마크 | VQAv2 counting 1,000문항 (val에서 새로 선정), GQA testdev-balanced 전체 12,578문항 |
 | 방법 | Token merge 없음, ToMe, ToSA, Depth-only, Depth-RGB |
 | 병합 강도 | 729개 중 156개(21.4%), 338개(46.4%), 520개(71.3%), 650개(89.2%) 병합 |
@@ -24,6 +33,8 @@ VLM 비전 인코더 안에서 시각 토큰을 합칠 때 **깊이(depth) 영�
 코드 저장소: [depth-region-vlm](https://github.com/ondeviceteam/depth-region-vlm) (commit [`efe0a51`](https://github.com/ondeviceteam/depth-region-vlm/commit/efe0a516ffa0abe8f4947f81974aa7a90e8ab143))
 
 ## 결과: LLaVA-OneVision-7B
+
+그래프: [`figures/7b/`](figures/7b) (방법별 `method_*.png`, 벤치마크별 방법 비교 `compare_*.png`)
 
 - 각 표의 굵은 글씨는 병합 방법 가운데 가장 높은 점수입니다. *Token merge 없음*은 모든 표에 같은 값으로 넣은 기준선입니다.
 - **실행 성공**은 Depth 방법이 목표 토큰 수까지 병합할 수 있었던 문항 수입니다. 보호 토큰과 깊이 영역의 수가 목표보다 많으면 실행 불가로 기록하고 0점을 줍니다.
@@ -145,6 +156,121 @@ VQAv2 counting에서 Token merge 없음과 338개 병합 조건은 3회씩 실�
 
 ToMe와 ToSA는 입력과 seed가 같아도 실행마다 답이 달라집니다. 3회 사이의 점수 폭은 각각 1.42%p와 0.48%p입니다. 원인은 아직 확인하지 않았습니다. 338개 병합에서 Depth 방법과 ToSA의 차이(3~4%p)는 이 폭보다 큽니다.
 
+## 결과: LLaVA-OneVision-0.5B
+
+그래프: [`figures/0.5b/`](figures/0.5b) (방법별 `method_*.png`, 벤치마크별 방법 비교 `compare_*.png`)
+
+모델만 바꾸고 문항, 방법, 병합 강도, 채점은 7B와 같습니다. 표 읽는 법도 7B와 같습니다. 깊이 영역은 모델과 무관하게 정해지므로 Depth 방법의 실행 성공 문항 수도 7B와 같습니다.
+
+### VQAv2 counting
+
+#### 156개 병합 (21.4% 병합, 729 → 573개 남음)
+
+| 방법 | VQA accuracy (%) | RCA (%) | 실행 성공 |
+|---|---:|---:|---:|
+| *Token merge 없음* | *62.13* | *69.67* | 1000/1000 |
+| ToMe | 46.26 | 47.93 | 1000/1000 |
+| ToSA | 52.56 | 55.50 | 1000/1000 |
+| Depth-only | 60.69 | 68.17 | 1000/1000 |
+| Depth-RGB | **61.00** | **68.62** | 1000/1000 |
+
+#### 338개 병합 (46.4% 병합, 729 → 391개 남음)
+
+| 방법 | VQA accuracy (%) | RCA (%) | 실행 성공 |
+|---|---:|---:|---:|
+| *Token merge 없음* | *62.13* | *69.67* | 1000/1000 |
+| ToMe | 46.49 | 48.95 | 1000/1000 |
+| ToSA | 51.35 | 55.44 | 1000/1000 |
+| Depth-only | **57.85** | **64.14** | 999/1000 |
+| Depth-RGB | 56.68 | 62.10 | 999/1000 |
+
+#### 520개 병합 (71.3% 병합, 729 → 209개 남음)
+
+| 방법 | VQA accuracy (%) | RCA (%) | 실행 성공 |
+|---|---:|---:|---:|
+| *Token merge 없음* | *62.13* | *69.67* | 1000/1000 |
+| ToMe | 47.39 | 53.44 | 1000/1000 |
+| ToSA | **52.00** | **57.40** | 1000/1000 |
+| Depth-only | 49.18 | 53.99 | 950/1000 |
+| Depth-RGB | 49.55 | 57.29 | 950/1000 |
+
+#### 650개 병합 (89.2% 병합, 729 → 79개 남음)
+
+| 방법 | VQA accuracy (%) | RCA (%) | 실행 성공 |
+|---|---:|---:|---:|
+| *Token merge 없음* | *62.13* | *69.67* | 1000/1000 |
+| ToMe | 47.90 | **60.23** | 1000/1000 |
+| ToSA | **48.71** | 59.60 | 1000/1000 |
+| Depth-only | 19.17 | 23.83 | 450/1000 |
+| Depth-RGB | 18.64 | 23.04 | 450/1000 |
+
+### GQA
+
+#### 156개 병합 (21.4% 병합, 729 → 573개 남음)
+
+| 방법 | Exact match (%) | 실행 성공 |
+|---|---:|---:|
+| *Token merge 없음* | *52.46* | 12578/12578 |
+| ToMe | 50.25 | 12578/12578 |
+| ToSA | 50.49 | 12578/12578 |
+| Depth-only | **52.13** | 12578/12578 |
+| Depth-RGB | 51.97 | 12578/12578 |
+
+#### 338개 병합 (46.4% 병합, 729 → 391개 남음)
+
+| 방법 | Exact match (%) | 실행 성공 |
+|---|---:|---:|
+| *Token merge 없음* | *52.46* | 12578/12578 |
+| ToMe | 49.66 | 12578/12578 |
+| ToSA | 50.17 | 12578/12578 |
+| Depth-only | **50.56** | 12529/12578 |
+| Depth-RGB | 50.49 | 12529/12578 |
+
+#### 520개 병합 (71.3% 병합, 729 → 209개 남음)
+
+| 방법 | Exact match (%) | 실행 성공 |
+|---|---:|---:|
+| *Token merge 없음* | *52.46* | 12578/12578 |
+| ToMe | 48.16 | 12578/12578 |
+| ToSA | **48.49** | 12578/12578 |
+| Depth-only | 46.80 | 12121/12578 |
+| Depth-RGB | 46.90 | 12121/12578 |
+
+#### 650개 병합 (89.2% 병합, 729 → 79개 남음)
+
+| 방법 | Exact match (%) | 실행 성공 |
+|---|---:|---:|
+| *Token merge 없음* | *52.46* | 12578/12578 |
+| ToMe | 45.49 | 12578/12578 |
+| ToSA | **45.58** | 12578/12578 |
+| Depth-only | 20.54 | 5741/12578 |
+| Depth-RGB | 20.34 | 5741/12578 |
+
+### 실행 불가 문항을 뺀 비교 (사후 분석)
+
+7B와 같은 사후 분석입니다.
+
+| 벤치마크 · 병합 | 문항 수 | Token merge 없음 | ToMe | ToSA | Depth-only | Depth-RGB |
+|---|---:|---:|---:|---:|---:|---:|
+| VQAv2 counting · 520개 | 950 | 62.64 | 47.65 | **52.57** | 51.77 | 52.16 |
+| VQAv2 counting · 650개 | 450 | 59.51 | **47.24** | 46.89 | 42.60 | 41.42 |
+| GQA · 520개 | 12,121 | 52.75 | 48.50 | **48.81** | 48.57 | 48.67 |
+| GQA · 650개 | 5,741 | 53.46 | 46.86 | **47.29** | 45.01 | 44.56 |
+
+7B와 마찬가지로, 실행된 문항만 보아도 650개 병합에서는 Depth 방법이 ToSA와 ToMe보다 낮습니다.
+
+### 반복 실행
+
+| 방법 | VQA accuracy 3회 (%) | 3회 답변이 모두 같은 문항 |
+|---|---|---:|
+| Token merge 없음 | 62.13 / 62.13 / 62.13 | 100.0% |
+| ToMe | 46.49 / 46.58 / 46.43 | 75.8% |
+| ToSA | 51.35 / 51.45 / 50.35 | 76.6% |
+| Depth-only | 57.85 / 57.85 / 57.85 | 100.0% |
+| Depth-RGB | 56.68 / 56.68 / 56.68 | 100.0% |
+
+7B처럼 ToMe와 ToSA만 실행마다 답이 달라집니다. 3회 사이의 점수 폭은 각각 0.15%p와 1.10%p입니다. 338개 병합에서 Depth 방법과 ToSA의 차이(5~7%p)는 이 폭보다 큽니다.
+
 ## 방법
 
 다섯 방법 모두 ToSA 공식 코드의 같은 ToMe 블록을 거칩니다. 비전 인코더의 26개 층마다 `r`개씩 토큰을 합치며, `r = int((384·384/14²)·(1 − keep)/27)`는 공식 코드의 식을 그대로 썼습니다. 병합한 토큰은 복원하지 않고 LLM에 넘깁니다.
@@ -169,26 +295,29 @@ ToMe와 ToSA는 입력과 seed가 같아도 실행마다 답이 달라집니다.
   - 이전 실험에서 쓴 이미지 250장(`datasets/excluded_coco_val2014_images.json`)은 뺐습니다.
 - **GQA (`datasets/gqa_testdev_balanced.json`):**
   - testdev-balanced 전체 12,578문항, 이미지 398장입니다.
-  - 문항 유형별 점수는 `results/2026-10-28_7b_vqav2_gqa/gqa_by_type.csv`에 있습니다.
+  - 문항 유형별 점수는 각 결과 폴더의 `gqa_by_type.csv`에 있습니다.
 
 ## 파일과 재현
 
 | 경로 | 내용 |
 |---|---|
-| `experiments/2026-10-28_7b_vqav2_gqa/` | 추론 전에 고정한 protocol과 ToSA 공식 코드에 적용한 호환 패치 |
-| `results/2026-10-28_7b_vqav2_gqa/raw/` | 문항별 원시 답변(jsonl), 실행 환경, 로그 |
-| `results/2026-10-28_7b_vqav2_gqa/*.csv` | 점수 표, 같은 문항끼리 비교한 차이와 신뢰구간, 반복 실행, GQA 유형별 점수, 사후 분석 |
-| `figures/` | 병합 비율에 따른 점수 그래프: 방법별(`method_*.png`)과 벤치마크별 방법 비교(`compare_*.png`) |
+| `experiments/2026-10-28_7b_vqav2_gqa/`, `experiments/2026-10-28_0.5b_vqav2_gqa/` | 추론 전에 고정한 protocol과 ToSA 공식 코드에 적용한 호환 패치 |
+| `results/2026-10-28_{7b,0.5b}_vqav2_gqa/raw/` | 문항별 원시 답변(jsonl), 실행 환경, 로그 |
+| `results/2026-10-28_{7b,0.5b}_vqav2_gqa/*.csv` | 점수 표, 같은 문항끼리 비교한 차이와 신뢰구간, 반복 실행, GQA 유형별 점수, 사후 분석 |
+| `figures/7b/`, `figures/0.5b/` | 병합 비율에 따른 점수 그래프: 방법별(`method_*.png`)과 벤치마크별 방법 비교(`compare_*.png`) |
 | `scripts/` | 데이터 준비, 깊이 생성, 추론, 채점, 그래프 코드 |
 
 원시 답변만으로 모든 표를 다시 만들 수 있습니다.
 
 ```bash
-python scripts/summarize.py results/2026-10-28_7b_vqav2_gqa      # 채점과 CSV 생성 (bootstrap 때문에 메모리가 넉넉해야 합니다)
-python scripts/feasible_subset.py results/2026-10-28_7b_vqav2_gqa
-python scripts/readme_tables.py results/2026-10-28_7b_vqav2_gqa  # README 결과 표 출력
-python scripts/plot_results.py results/2026-10-28_7b_vqav2_gqa figures
+for m in 7b 0.5b; do
+  R=results/2026-10-28_${m}_vqav2_gqa
+  python scripts/summarize.py $R        # 채점과 CSV 생성 (bootstrap 때문에 메모리가 넉넉해야 합니다)
+  python scripts/feasible_subset.py $R
+  python scripts/readme_tables.py $R    # README 결과 표 출력
+  python scripts/plot_results.py $R figures/$m
+done
 python -m pytest scripts/test_counting_rca.py
 ```
 
-추론은 PBS job 안에서 `scripts/launch_eval.sh JOB RUNTIME DATA OUTPUT dataset:variant:shard:num_shards:gpu ...`로 실행했습니다. 깊이는 `scripts/launch_depth.sh`로 만들었습니다.
+추론은 PBS job 안에서 `scripts/launch_eval.sh JOB RUNTIME DATA EXPERIMENT OUTPUT dataset:variant:shard:num_shards:gpu ...`로 실행했습니다. `EXPERIMENT`는 `experiments/` 아래 폴더 이름이고, 모델은 그 protocol에서 정해집니다. 7B는 이 인자를 넣기 전인 commit `47e0f8b`의 스크립트로 실행했습니다(protocol의 harness 해시가 그 시점 파일과 같습니다). 깊이는 `scripts/launch_depth.sh`로 만들었습니다.
