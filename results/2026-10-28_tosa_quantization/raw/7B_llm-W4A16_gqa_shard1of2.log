@@ -1,0 +1,31 @@
+Please install pyav to use video processing functions.
+OpenCLIP not installed
+Loaded LLaVA model: /dev/shm/rintern01-v5-count200-131000/tosa-official/huggingface/hub/models--lmms-lab--llava-onevision-qwen2-7b-ov/snapshots/0b07bf7565e244cf4f39982249eafe8cd799d6dd
+You are using a model of type llava to instantiate a model of type llava_qwen. This is not supported for all configurations of models and can yield errors.
+Overwriting config with {'image_aspect_ratio': None, 'tome': '3D', 'visual_token_merge_ratio': 1.0, 'mm_vision_tower': 'google/siglip-so400m-patch14-384', 'alpha': [0.0, 0.04, 0.08, 0.12, 0.16, 0.2, 0.24, 0.28, 0.32, 0.36, 0.4, 0.44, 0.48, 0.52, 0.56, 0.6, 0.64, 0.68, 0.72, 0.76, 0.8, 0.84, 0.88, 0.92, 0.96, 1.0]}
+Loading vision tower: google/siglip-so400m-patch14-384
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:06<00:19,  6.66s/it]Loading checkpoint shards:  50%|█████     | 2/4 [00:12<00:11,  5.97s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:17<00:05,  5.84s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:19<00:00,  4.10s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:19<00:00,  4.81s/it]
+Model Class: LlavaQwenForCausalLM
+The attention mask is not set and cannot be inferred from input because pad token is same as eos token. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+PREFLIGHT_PASS 7B_llm-W4A16_gqa_shard1of2
+PROGRESS 7B_llm-W4A16_gqa_shard1of2 1 1000
+PROGRESS 7B_llm-W4A16_gqa_shard1of2 51 1000
+PROGRESS 7B_llm-W4A16_gqa_shard1of2 101 1000
+PROGRESS 7B_llm-W4A16_gqa_shard1of2 151 1000
+PROGRESS 7B_llm-W4A16_gqa_shard1of2 201 1000
+PROGRESS 7B_llm-W4A16_gqa_shard1of2 251 1000
+PROGRESS 7B_llm-W4A16_gqa_shard1of2 301 1000
+PROGRESS 7B_llm-W4A16_gqa_shard1of2 351 1000
+PROGRESS 7B_llm-W4A16_gqa_shard1of2 401 1000
+PROGRESS 7B_llm-W4A16_gqa_shard1of2 451 1000
+PROGRESS 7B_llm-W4A16_gqa_shard1of2 501 1000
+PROGRESS 7B_llm-W4A16_gqa_shard1of2 551 1000
+PROGRESS 7B_llm-W4A16_gqa_shard1of2 601 1000
+PROGRESS 7B_llm-W4A16_gqa_shard1of2 651 1000
+PROGRESS 7B_llm-W4A16_gqa_shard1of2 701 1000
+PROGRESS 7B_llm-W4A16_gqa_shard1of2 751 1000
+PROGRESS 7B_llm-W4A16_gqa_shard1of2 801 1000
+PROGRESS 7B_llm-W4A16_gqa_shard1of2 851 1000
+PROGRESS 7B_llm-W4A16_gqa_shard1of2 901 1000
+PROGRESS 7B_llm-W4A16_gqa_shard1of2 951 1000
+COMPLETE 7B_llm-W4A16_gqa_shard1of2 9000

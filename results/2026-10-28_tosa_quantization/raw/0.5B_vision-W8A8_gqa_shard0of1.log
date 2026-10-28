@@ -1,0 +1,50 @@
+Please install pyav to use video processing functions.
+OpenCLIP not installed
+Loaded LLaVA model: /dev/shm/rintern01-v5-count200-131000/tosa-official/huggingface/hub/models--lmms-lab--llava-onevision-qwen2-0.5b-ov/snapshots/381d9947148efb1e58a577f451c05705ceec666e
+You are using a model of type llava to instantiate a model of type llava_qwen. This is not supported for all configurations of models and can yield errors.
+Overwriting config with {'image_aspect_ratio': None, 'tome': '3D', 'visual_token_merge_ratio': 1.0, 'mm_vision_tower': 'google/siglip-so400m-patch14-384', 'alpha': [0.0, 0.04, 0.08, 0.12, 0.16, 0.2, 0.24, 0.28, 0.32, 0.36, 0.4, 0.44, 0.48, 0.52, 0.56, 0.6, 0.64, 0.68, 0.72, 0.76, 0.8, 0.84, 0.88, 0.92, 0.96, 1.0]}
+Loading vision tower: google/siglip-so400m-patch14-384
+Model Class: LlavaQwenForCausalLM
+The attention mask is not set and cannot be inferred from input because pad token is same as eos token. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+PREFLIGHT_PASS 0.5B_vision-W8A8_gqa_shard0of1
+PROGRESS 0.5B_vision-W8A8_gqa_shard0of1 1 2000
+PROGRESS 0.5B_vision-W8A8_gqa_shard0of1 51 2000
+PROGRESS 0.5B_vision-W8A8_gqa_shard0of1 101 2000
+PROGRESS 0.5B_vision-W8A8_gqa_shard0of1 151 2000
+PROGRESS 0.5B_vision-W8A8_gqa_shard0of1 201 2000
+PROGRESS 0.5B_vision-W8A8_gqa_shard0of1 251 2000
+PROGRESS 0.5B_vision-W8A8_gqa_shard0of1 301 2000
+PROGRESS 0.5B_vision-W8A8_gqa_shard0of1 351 2000
+PROGRESS 0.5B_vision-W8A8_gqa_shard0of1 401 2000
+PROGRESS 0.5B_vision-W8A8_gqa_shard0of1 451 2000
+PROGRESS 0.5B_vision-W8A8_gqa_shard0of1 501 2000
+PROGRESS 0.5B_vision-W8A8_gqa_shard0of1 551 2000
+PROGRESS 0.5B_vision-W8A8_gqa_shard0of1 601 2000
+PROGRESS 0.5B_vision-W8A8_gqa_shard0of1 651 2000
+PROGRESS 0.5B_vision-W8A8_gqa_shard0of1 701 2000
+PROGRESS 0.5B_vision-W8A8_gqa_shard0of1 751 2000
+PROGRESS 0.5B_vision-W8A8_gqa_shard0of1 801 2000
+PROGRESS 0.5B_vision-W8A8_gqa_shard0of1 851 2000
+PROGRESS 0.5B_vision-W8A8_gqa_shard0of1 901 2000
+PROGRESS 0.5B_vision-W8A8_gqa_shard0of1 951 2000
+PROGRESS 0.5B_vision-W8A8_gqa_shard0of1 1001 2000
+PROGRESS 0.5B_vision-W8A8_gqa_shard0of1 1051 2000
+PROGRESS 0.5B_vision-W8A8_gqa_shard0of1 1101 2000
+PROGRESS 0.5B_vision-W8A8_gqa_shard0of1 1151 2000
+PROGRESS 0.5B_vision-W8A8_gqa_shard0of1 1201 2000
+PROGRESS 0.5B_vision-W8A8_gqa_shard0of1 1251 2000
+PROGRESS 0.5B_vision-W8A8_gqa_shard0of1 1301 2000
+PROGRESS 0.5B_vision-W8A8_gqa_shard0of1 1351 2000
+PROGRESS 0.5B_vision-W8A8_gqa_shard0of1 1401 2000
+PROGRESS 0.5B_vision-W8A8_gqa_shard0of1 1451 2000
+PROGRESS 0.5B_vision-W8A8_gqa_shard0of1 1501 2000
+PROGRESS 0.5B_vision-W8A8_gqa_shard0of1 1551 2000
+PROGRESS 0.5B_vision-W8A8_gqa_shard0of1 1601 2000
+PROGRESS 0.5B_vision-W8A8_gqa_shard0of1 1651 2000
+PROGRESS 0.5B_vision-W8A8_gqa_shard0of1 1701 2000
+PROGRESS 0.5B_vision-W8A8_gqa_shard0of1 1751 2000
+PROGRESS 0.5B_vision-W8A8_gqa_shard0of1 1801 2000
+PROGRESS 0.5B_vision-W8A8_gqa_shard0of1 1851 2000
+PROGRESS 0.5B_vision-W8A8_gqa_shard0of1 1901 2000
+PROGRESS 0.5B_vision-W8A8_gqa_shard0of1 1951 2000
+COMPLETE 0.5B_vision-W8A8_gqa_shard0of1 18000
