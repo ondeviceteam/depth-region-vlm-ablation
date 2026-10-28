@@ -178,7 +178,8 @@ ToMe와 ToSA는 입력과 seed가 같아도 실행마다 답이 달라집니다.
 | `experiments/2026-10-28_7b_vqav2_gqa/` | 추론 전에 고정한 protocol과 ToSA 공식 코드에 적용한 호환 패치 |
 | `results/2026-10-28_7b_vqav2_gqa/raw/` | 문항별 원시 답변(jsonl), 실행 환경, 로그 |
 | `results/2026-10-28_7b_vqav2_gqa/*.csv` | 점수 표, 같은 문항끼리 비교한 차이와 신뢰구간, 반복 실행, GQA 유형별 점수, 사후 분석 |
-| `scripts/` | 데이터 준비, 깊이 생성, 추론, 채점 코드 |
+| `figures/` | 병합 비율에 따른 점수 그래프: 방법별(`method_*.png`)과 벤치마크별 방법 비교(`compare_*.png`) |
+| `scripts/` | 데이터 준비, 깊이 생성, 추론, 채점, 그래프 코드 |
 
 원시 답변만으로 모든 표를 다시 만들 수 있습니다.
 
@@ -186,6 +187,7 @@ ToMe와 ToSA는 입력과 seed가 같아도 실행마다 답이 달라집니다.
 python scripts/summarize.py results/2026-10-28_7b_vqav2_gqa      # 채점과 CSV 생성 (bootstrap 때문에 메모리가 넉넉해야 합니다)
 python scripts/feasible_subset.py results/2026-10-28_7b_vqav2_gqa
 python scripts/readme_tables.py results/2026-10-28_7b_vqav2_gqa  # README 결과 표 출력
+python scripts/plot_results.py results/2026-10-28_7b_vqav2_gqa figures
 python -m pytest scripts/test_counting_rca.py
 ```
 
