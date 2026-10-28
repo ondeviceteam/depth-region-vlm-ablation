@@ -1,0 +1,228 @@
+{
+  "name": "Does token merging amplify the quantization loss? Interaction at every merge amount, trend and omnibus tests, and repeated runs (ToSA, LLaVA-OneVision 0.5B and 7B)",
+  "frozen_before_inference": true,
+  "question": "Is I(m) = dQ(m) - dQ(0) below 0, with dQ(m) = score(quantized, m) - score(FP, m)? I(m) < 0: more quantization loss after merging; I(m) ~ 0: merging does not change the loss; I(m) > 0: less relative loss.",
+  "background": "The earlier protocol (experiments/2026-10-28_tosa_quantization) tested I only at 338 and 650 merged tokens. Its figures show single points that look amplified, for example 0.5B LLM W4A16 on VQAv2 counting at 78 merged tokens, but no steady growth with the merge amount. This protocol was written after those results were seen; part A re-analyses the existing answers with tests that were not computed before, part B adds new runs.",
+  "part_a_existing_answers": {
+    "data": "results/2026-10-28_tosa_quantization, run 0 at every r",
+    "series": "2 models x 2 datasets x 4 quantized precisions = 16 series; primary metric only (VQA accuracy, exact match)",
+    "interaction": "I(m) at all 8 merge amounts m = 78, 156, 234, 338, 416, 520, 598, 650: mean, paired bootstrap 95% interval (10,000, seed 20261028), two-sided p from the normal approximation of the paired t statistic. Family: 128 tests, Holm correction.",
+    "trend": "slope of dQ(m) on m/729 (least squares over the 9 merge amounts, per question), reported per 10% of tokens merged; interval and p as above. Family: 16 tests, Holm.",
+    "omnibus": "Hotelling T^2 on the per-question vector (I(78), ..., I(650)); large-sample chi-square with 8 degrees of freedom. Tests whether dQ changes at all with m. Family: 16 tests, Holm.",
+    "run_noise": "VQAv2 counting has 3 runs at 338 merged tokens: I computed per run shows the run-to-run variation of a single-run I."
+  },
+  "part_b_repeated_runs": {
+    "purpose": "ToSA and quantized runs give different answers in different runs. Check whether single-run interactions, in particular 0.5B LLM W4A16 at 78 merged tokens, repeat.",
+    "new_inference": "runs 1 and 2 for every precision (FP and the 4 quantized) at r in r_values (all except r = 13, which already has runs 0-2)",
+    "analysis": "per-question scores averaged over runs 0, 1, 2; I(m) at the 8 merge amounts (family: 32 tests, Holm) and the trend slope (family: 4 tests, Holm); I(m) of each run is also reported",
+    "primary_check": "0.5B LLM W4A16, VQAv2 counting, m = 78: the run-averaged I(78) interval is below 0 (amplification repeats) or includes 0 (it does not)."
+  },
+  "reading_rules": [
+    "A single I(m) counts as amplification only when its Holm-corrected p < 0.05 and I(m) < 0.",
+    "A steady increase of the loss with the merge amount needs a trend slope below 0 with Holm-corrected p < 0.05.",
+    "An interval that includes 0 is reported as no clear difference, not as improvement or worsening."
+  ],
+  "replicate_scope": {
+    "model": "0.5B",
+    "dataset": "vqav2_count"
+  },
+  "models": {
+    "0.5B": {
+      "name": "lmms-lab/llava-onevision-qwen2-0.5b-ov",
+      "revision": "381d9947148efb1e58a577f451c05705ceec666e"
+    }
+  },
+  "vision_model": "google/siglip-so400m-patch14-384",
+  "vision_revision": "9fdffc58afc957d1a03a25b10dba0329ab15c2a3",
+  "upstream": {
+    "repository": "https://github.com/hsiangwei0903/ToSA",
+    "commit": "30767ed473dc919137cbeb9d4baa6a2f2e3c44f1",
+    "patch": "experiments/2026-10-28_tosa_quantization/upstream_compatibility.patch",
+    "patch_purpose": "Defer an unavailable optional import and unused Llama3 tokenizer loading. Encoders, matching, prompt and generation unchanged."
+  },
+  "datasets": {
+    "vqav2_count": {
+      "manifest": "datasets/vqav2_count1000.json",
+      "manifest_sha256": "0d8c484f928c8584e8029e531ec01e901846b2f57c342678f9b33d3e6cae2a91"
+    }
+  },
+  "method": "Official ToSA only (tome=3D), alpha_style increase: alpha_l = l/25 for l=0..25; depth PNG patch mean, 27 depth levels. r=0 is Token merge 없음.",
+  "r_values": [
+    0,
+    3,
+    6,
+    9,
+    16,
+    20,
+    23,
+    25
+  ],
+  "runs": [
+    1,
+    2
+  ],
+  "merge_strength": {
+    "0": {
+      "merged": 0,
+      "remaining": 729
+    },
+    "3": {
+      "merged": 78,
+      "remaining": 651
+    },
+    "6": {
+      "merged": 156,
+      "remaining": 573
+    },
+    "9": {
+      "merged": 234,
+      "remaining": 495
+    },
+    "13": {
+      "merged": 338,
+      "remaining": 391
+    },
+    "16": {
+      "merged": 416,
+      "remaining": 313
+    },
+    "20": {
+      "merged": 520,
+      "remaining": 209
+    },
+    "23": {
+      "merged": 598,
+      "remaining": 131
+    },
+    "25": {
+      "merged": 650,
+      "remaining": 79
+    }
+  },
+  "merge_schedule": "r tokens merged in each of 26 executed vision layers. r is set through the official keep ratio: keep = 1 - (r + 0.5) * 27 / (384*384/14**2), so the official int() formula gives exactly r (keep = 1 for r = 0).",
+  "precisions": {
+    "FP": "No quantization: vision encoder FP16, LM and projector BF16 (same as the full-precision experiments)",
+    "vision-W8A8": "All nn.Linear in the 26 vision encoder layers: 8-bit symmetric weights per output channel, 8-bit symmetric activations per token (dynamic). LM unchanged.",
+    "vision-W4A16": "All nn.Linear in the 26 vision encoder layers: 4-bit symmetric weights in groups of 128 input channels (last group zero-padded). Activations unchanged. LM unchanged.",
+    "llm-W8A8": "All nn.Linear in the language model decoder layers: 8-bit weights per output channel, 8-bit activations per token. Vision encoder unchanged.",
+    "llm-W4A16": "All nn.Linear in the language model decoder layers: 4-bit weights in groups of 128. Vision encoder unchanged."
+  },
+  "quantization_notes": "Simulated (fake) quantization: weights rounded once and stored in the original dtype; activations rounded by forward pre-hooks. Not quantized: patch embedding convolution, embeddings, LayerNorm/RMSNorm, attention softmax and matmuls, biases, multimodal projector, lm_head. No calibration data.",
+  "quantized_linear_layers": {
+    "0.5B": {
+      "vision": 156,
+      "llm": 168
+    },
+    "7B": {
+      "vision": 156,
+      "llm": 196
+    }
+  },
+  "image_input": "image_aspect_ratio=None: one 384x384 image; merged tokens passed to the LLM without restoration",
+  "prompt": "Official run_vqa_3d_tome.py: \"'<question>' Answer the question using a single word or phrase.\" with qwen_1_5 conversation",
+  "generation": {
+    "do_sample": false,
+    "temperature": 0,
+    "max_new_tokens": 1000,
+    "seed": 42
+  },
+  "metrics": {
+    "vqav2_count": {
+      "primary": "VQA accuracy: official VQAv2 normalization and leave-one-annotator-out consensus over 10 answers, all questions",
+      "secondary": [
+        "RCA = mean(1-|pred-truth|/truth) over multiple_choice_answer>0, no clipping"
+      ]
+    },
+    "gqa": {
+      "primary": "Exact match: first sentence of the answer, VQA-style normalization, equal to the gold answer"
+    }
+  },
+  "not_tuned": "Merge amounts, runs, tests, families and reading rules are fixed here before the new runs and before any of the part A statistics are computed.",
+  "harness_sha256": {
+    "scripts/run_quant_replicate.py": "e2008e1db1361cf5e1b93b33c3e5307407d8e9f2c05e8d38ddba07d44c42f470",
+    "scripts/fake_quant.py": "4f398110b8a4b81719454fcb6ee648f367f6efef534fea7d59cf8e440b07b7a5",
+    "scripts/launch_quant_replicate.sh": "1e438ecf663eb2995cdbe159196056ce6d3564bd855275a4695ab6ada09427ee",
+    "scripts/analyze_quant_interaction.py": "54ec256888149f69009590c9cf5f2bd67dfb8d4f8f512844042220d95a00e8c4",
+    "scripts/summarize.py": "9afcc618aa9d892ae18d8bb741e8aab696e2d4ffacdaa3747ef8b49495ceaab0"
+  },
+  "upstream_python_sha256": {
+    "ToSA/run_vqa_3d_tome.py": "58805bc10732e9b678d7dface66eebf15ea24a814dcc3a7b9842380530a9111b",
+    "llava/__init__.py": "6199bccd59c30b5d5a1eb76e17e2b447e1cf5486276d2ff71f516f393978d026",
+    "llava/constants.py": "2c5a8a659b3c5c1c70360808ae901511db67da8fbe331e1329cd754f6f3a0879",
+    "llava/conversation.py": "462f34a7b46d77eda4675d876c1756c5a616fd99a0b893a27b12b56055a82962",
+    "llava/eval/evaluate_interleave.py": "273ed411e05655cc9e3b44389e708e2a05fa343ed21ab45293e1df9fc6a270cb",
+    "llava/eval/model_vqa.py": "c5ffd098bc7517909ad4ce2c92f93e204572f219258e394394cd4dec90761376",
+    "llava/mm_utils.py": "913f8f8b4d38c1bc4f6c37434d49904e4c1b45a09b476fa8bfa6f5c87071f61f",
+    "llava/model/__init__.py": "16714be8b5e852887466b048d2bde886ff37f9cbbc701cd0565822a5e9507d5c",
+    "llava/model/apply_delta.py": "d8fe7f8d7f89b03b22ca2b0165d0c572d88e312e4f3d57bc77192b2ba33bd7d4",
+    "llava/model/builder.py": "b8743c41bc164191b50a0f5a16ff5e09f488fd63bed720711bfc96eb86319e7d",
+    "llava/model/consolidate.py": "7382809f80ea8b27381215a6a7a79e7f1a1c3595f2ff696cab2be51014ede20b",
+    "llava/model/language_model/llava_gemma.py": "1aec4402c2cfbb5dffb0e4d5767633a703cdf4c30450c7b28062be665b0024fd",
+    "llava/model/language_model/llava_llama.py": "8a8f8374d49ac8780f24075be56ebddc326e944cfb719a142627ef81c915cc1f",
+    "llava/model/language_model/llava_mistral.py": "812e13001b26d35bf5825600f4b5d87120d532cd75d88d0503a9915bf0b8de68",
+    "llava/model/language_model/llava_mixtral.py": "32530bcda9adc0f97d70a8fedd781afa3004c441860b69d9cae348135b797d47",
+    "llava/model/language_model/llava_mpt.py": "1b663c04b9c93df50cd61421f5138a6d14c6b6b1f79383b5e035d3aba1bd4b96",
+    "llava/model/language_model/llava_qwen.py": "4103b49fd610e8b54e70251aaa31e014663a82bf9e4b6bdfe69e0566ecc746be",
+    "llava/model/language_model/llava_qwen_moe.py": "777ad2b55d3f127276e14646802cb5adf53959f538522bbc305392a1e14e8f07",
+    "llava/model/language_model/modeling_llama.py": "9ceb3d0c5d0affafd497f6dba50d6c76ea2c4769ed2a9370f0baf8d8c005442b",
+    "llava/model/llava_arch.py": "376c989997e5447d7539249735468e16e9e97be84f999db54906acdad329d8c6",
+    "llava/model/make_delta.py": "9cc84e226715680c476e89f64cc0f25f0e3e3e245620779e0541f0939196758c",
+    "llava/model/multimodal_encoder/builder.py": "672d9f3f6af39f680c22ce71f7b81ae971a27e734067b78e7faf2bc43951407b",
+    "llava/model/multimodal_encoder/clip_encoder.py": "1ca15402531773b2f81acc6bbc54078e72b48805903f41960bc23d08310c5fd5",
+    "llava/model/multimodal_encoder/dev_eva_clip/eva_clip/__init__.py": "1441e26dc6f0c595e527b9981c806e258534ab5652a558500d300498b2d1d105",
+    "llava/model/multimodal_encoder/dev_eva_clip/eva_clip/constants.py": "4289fac298908e2fb814ff84b4594ff49094a7eab074fed1b2ca6429339e923b",
+    "llava/model/multimodal_encoder/dev_eva_clip/eva_clip/eva_vit_model.py": "34a743a80073bf55198db4f124953ca666f4e297614fa3e6c8a28f5b47902309",
+    "llava/model/multimodal_encoder/dev_eva_clip/eva_clip/factory.py": "8130effb683e8bed6dcc04ad3c778351f9ba6d0b8236f9f5cd1dc1c6aea25e7f",
+    "llava/model/multimodal_encoder/dev_eva_clip/eva_clip/hf_configs.py": "027d1d5475da1c664b697f3751c0df09d572b2dddab724ba466720050c991944",
+    "llava/model/multimodal_encoder/dev_eva_clip/eva_clip/hf_model.py": "e0e3c0d5b5981dbedba1deeaad6a8e154e50c06749fec9da3efd9b1e07e23eac",
+    "llava/model/multimodal_encoder/dev_eva_clip/eva_clip/loss.py": "87be11c1cd755e7e61d0f84e8f87def32d8fbeb15c8816c4b4d4ed290dd559e7",
+    "llava/model/multimodal_encoder/dev_eva_clip/eva_clip/model.py": "660f38006bcf733fcab5980385b1ff16f39b20ac7d280af915b4a5ef0568fba1",
+    "llava/model/multimodal_encoder/dev_eva_clip/eva_clip/modified_resnet.py": "406a395b656938bf8bf60c60a8754bf37b1ac0bd3ae6cb142343b0b8ea98ab3f",
+    "llava/model/multimodal_encoder/dev_eva_clip/eva_clip/openai.py": "c60987bc0b592e83c1459f44c5e5cb24351be73ca393a6c553ddad6f6c8df477",
+    "llava/model/multimodal_encoder/dev_eva_clip/eva_clip/pretrained.py": "0716170c1aa6e593e6554506a48e485913d6df30c929e9a060db4ac64fc6f6cf",
+    "llava/model/multimodal_encoder/dev_eva_clip/eva_clip/rope.py": "c23e4c5cb00fd898e166d7ea6c7e8f18652c84921f964086194d95e88695de1d",
+    "llava/model/multimodal_encoder/dev_eva_clip/eva_clip/timm_model.py": "cffee26efa191e67f0bb9564e36d196065050218e15f07791685560938ef4789",
+    "llava/model/multimodal_encoder/dev_eva_clip/eva_clip/tokenizer.py": "09c3abd1014924db766fab025336425587cad14b134bee5e58fb6ea6bbd8ff86",
+    "llava/model/multimodal_encoder/dev_eva_clip/eva_clip/transform.py": "9876e481e0647b52cc5a512efced658b361f7704c6f21dcc263d0fa4abd14235",
+    "llava/model/multimodal_encoder/dev_eva_clip/eva_clip/transformer.py": "5c2e3823e2f53cb85aef82f7861c630ea824b2a87184b5c22a9d1924db0bf618",
+    "llava/model/multimodal_encoder/dev_eva_clip/eva_clip/utils.py": "be6e0efdada240161b029ef972bc3c343e69c224d9c55c1758c65b89b70d3488",
+    "llava/model/multimodal_encoder/dev_eva_clip/eva_vit.py": "f90e92897b94cdf1229cdd06cf57530d1f0ee8d3a0211e33be55635d7ae6fde2",
+    "llava/model/multimodal_encoder/eva_clip/eva_clip_encoder.py": "5900e8a6962a98c4b49d19cccbb0edc52a6a218008136576c7f186cf344672c1",
+    "llava/model/multimodal_encoder/eva_clip/eva_clip_processors.py": "e7f7ec09449aa0186de789104d863f50ba279f8d580c64fba4736c54ada17528",
+    "llava/model/multimodal_encoder/eva_clip/eva_vit.py": "cd113db6729ecdd1a8fb34fb858b86c2d327eb0d7d2e96cd1aad391d0298699c",
+    "llava/model/multimodal_encoder/eva_clip/factory.py": "2a34bffaeca1d2dc467e4e5757c00eec18964a261f7671997796cea3dd8ebfb2",
+    "llava/model/multimodal_encoder/hf_vision.py": "edfc49ff0049d957ab957e00da241a28c2a8bc5a687e1552c53cc6d54c849681",
+    "llava/model/multimodal_encoder/imagebind.py": "6a6545354fbce32299f9e2ef180df5d758fdee77504b281d9fb1263fe2ba6452",
+    "llava/model/multimodal_encoder/open_clip_encoder.py": "1a8889ad1af75db5567b14aafd790d394e815cbbc9d30d0bb561523a325163a0",
+    "llava/model/multimodal_encoder/siglip_encoder.py": "09b0e16ed6f0281d86f39fb2ad1c938cb684d8df5272f8b952c3f9e41156cfc3",
+    "llava/model/multimodal_encoder/siglip_encoder_2D_tome.py": "5d18dd8dd1c6090d548f093e580064c9719dd1155c40f5a9662781ddb06c4f94",
+    "llava/model/multimodal_encoder/siglip_encoder_2D_tome_viz.py": "c1d9923e0c2fe1900ce9d29356738a45f7f4a94ac5a45188e7dc5488284bc2b8",
+    "llava/model/multimodal_encoder/siglip_encoder_3D_tome.py": "92753e4bc2dcc8b9fc7482d32937d39e1bc3b7d730ef882d37e264bc8f79737e",
+    "llava/model/multimodal_encoder/siglip_encoder_3D_tome_viz.py": "d5bd6bf1320fd04c74e6b52489f8c06aefeb4bdbf64eadaea97a5ef578cec3d8",
+    "llava/model/multimodal_encoder/tome.py": "df94dab65ab3a05f0648bcbc0d01439cfc7b105220bf738365d3dc44f987c4c6",
+    "llava/model/multimodal_projector/builder.py": "b0e019aa3f2031b028d6d35b71ef40e16b4b9566c26ad5947dceba1d53777964",
+    "llava/model/multimodal_projector/pooler_projector.py": "5d9ed31673b3a3ac157f5ebcc5695503ed3e01c44214a42db80a96f8184235ee",
+    "llava/model/multimodal_resampler/builder.py": "2e82104348574effc7d2b65c502f439653e4b78bd62815c34a5e77dc7c7a3a5f",
+    "llava/model/multimodal_resampler/masked_drop.py": "3f9afbe809b8c08528d36f603d9bbd0039615ec01e1e94053abb91a38c059d27",
+    "llava/model/multimodal_resampler/perceiver.py": "ff6ea8388648ff0d38fc8e5c80dc8c5f53c1ccc55048acc7aa85a5081ebff7eb",
+    "llava/model/multimodal_resampler/qformer.py": "bca4dbbc24bb2914abdf6b8620a6431b95e7842c2acde7efbd6ef325544bc85d",
+    "llava/model/multimodal_resampler/spatial_pool.py": "12bccc0f04472b6fd7e92498f112c985e399c28b872ee10822d8b1d9556a3518",
+    "llava/model/utils.py": "a7f596b827dcae1d9563b474c5af353273fc7a5dcaa52d230e9833adef89f2bb",
+    "llava/serve/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "llava/serve/cli.py": "3d1f25c0c727301563782a5ae984b960a453eb0582072543db36b87ed4f9e2d6",
+    "llava/serve/controller.py": "cbbcc9c599f2383f5fb77985d82a80add32bee4e914b78b6711e42d8fcadc5cb",
+    "llava/serve/gradio_multi_image.py": "823b4972e44534a703601e430e6de1a982245b959da66ec97cc9982cd75c2401",
+    "llava/serve/gradio_web_server.py": "2bf89dff2ab96cd4a70f2756bbed9aceb10274d4fba4de9c01e22e5121197d48",
+    "llava/serve/model_worker.py": "b896ef0f07f2cc3da7b98d32717781c69282baaec518f1bf8d23bc362faab1c7",
+    "llava/serve/register_worker.py": "ebd9ba00aa2b511d3bed8145bf6713fb93e884f2032ede37c361a9b46f8f9ed4",
+    "llava/serve/sglang_worker.py": "ed9eca3e0863ae83e9bc60142bdcd631216deff83bfd1309a1c1d33e0ef5eb15",
+    "llava/serve/test_message.py": "ddd85854a11ecf9f22816e864d797a71c0225179bc62491834029bae64b0062a",
+    "llava/train/llama_flash_attn_monkey_patch.py": "313e6fa5b6a57b78f685cbf1f61c08a2c160189155b262d3a97f1e6f4c13cb44",
+    "llava/train/llava_trainer.py": "abd0a15869f4f4cd4e5127bbe38945d4c573e7828cf97943a6ca921cda3f374f",
+    "llava/train/llava_trainer_eval.py": "ecbd445d1c8fcd14280e5b77109deb74b4fc58b8de8131348d02bffb281c65ea",
+    "llava/train/train.py": "1857af9e4a62118f403b7e32c522721980fb2db40c24a03d163ae6176a87d295",
+    "llava/train/train_dpo.py": "6d27d8a197de2d219fd264d710c277cb020b992385c192d5deba299ee42d8a42",
+    "llava/train/train_mem.py": "d630162b97a07ddfa61a521277c01be5809dd614d05d65bb12e8f7c8296ad76b",
+    "llava/utils.py": "386c702d2701f421232c3ed211749a0109fbb1b0428b1f542aad79fe61fd6ebb"
+  }
+}
