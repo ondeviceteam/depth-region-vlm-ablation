@@ -366,7 +366,18 @@ Checks:
 
 **Question:** when ToSA merges more tokens, does quantization lose more accuracy?
 
-**Result:** we did not find this effect. 31 of the 32 primary tests show no clear difference. The last test (7B, vision W8A8, VQAv2 counting, 338 merged) goes in the opposite direction. Its value also changes between runs.
+**Result:** we did not find this effect. The full report is in `docs/quantization_interaction.md`.
+
+![I(m) with 95% interval at all 8 merge levels](figures/quantization/interaction_all.png)
+
+| Test | Result |
+|---|---|
+| I(m) at all 8 merge levels (128 tests, Holm correction) | 0 tests show a clear larger loss |
+| Trend of the loss as merge increases (16 tests) | No falling trend. One rising trend (0.5B, VQAv2 counting, LLM W4A16): the loss becomes smaller with more merge. |
+| Overall test of all levels (Hotelling T², 16 tests) | 0 series show a clear change |
+| 0.5B, VQAv2 counting, LLM W4A16, 78 merged (10.7%), 3 runs | I = −4.32 pp (interval −7.28 to −1.32). It repeats in all 3 runs. It does not pass the correction (corrected p = 0.15). Possible effect at one level, not confirmed. |
+
+The first analysis below tested only 338 and 650 merged tokens. 31 of its 32 tests show no clear difference. The last test (7B, vision W8A8, VQAv2 counting, 338 merged) goes in the opposite direction. Its value also changes between runs.
 
 <p>
 <img src="figures/quantization/7b_vqav2_count.png" width="49%" alt="7B, VQAv2 counting: score and quantization loss for each precision and merge level">
@@ -377,7 +388,7 @@ Checks:
 
 - 0.5B with LLM W4A16 loses accuracy at all merge levels. On VQAv2 counting, the loss is 6.46 pp with no merge (interval −9.12 to −3.89). The loss is 6.41 pp at 338 merged (interval −8.97 to −3.84).
 - 7B with LLM W4A16 loses 1.90 pp more on GQA at 650 merged. But the interval (−3.85 to +0.00) touches 0. Thus, there is no clear difference.
-- We did not correct for multiple tests. A correction gives fewer significant results.
+- The first analysis did not correct for multiple tests. The all-level analysis above uses the Holm correction.
 
 ```mermaid
 flowchart LR
@@ -497,6 +508,8 @@ This page does not show numbers from these experiments.
 | `experiments/2026-10-28_tosa_quantization/`, `results/2026-10-28_tosa_quantization/` | Protocol, raw answers, scores (`scores.csv`), quantization loss (`quant_loss.csv`), primary tests (`interaction.csv`) and repeat runs of the quantization experiment |
 | `docs/latency_and_compute.md` | Report of time, memory and FLOPs for each method and merge level |
 | `experiments/2026-10-29_latency_compute/`, `results/2026-10-29_latency_compute/` | Protocol, raw time and FLOPs rows, and summary CSV files of the speed measurement |
+| `docs/quantization_interaction.md` | Report of the quantization loss at all merge levels, the trend and the repeat runs |
+| `experiments/2026-10-29_quant_interaction/`, `results/2026-10-29_quant_interaction/` | Protocol, answers of the repeat runs, and the test CSV files |
 | `figures/` | Figures: `summary/` (difference from ToSA), `7b/` and `0.5b/` (score for each merge level), `quantization/`, `latency/` |
 | `scripts/` | Code for data, depth maps, inference, scores and figures |
 
@@ -517,10 +530,12 @@ python scripts/plot_difference.py $X figures/summary/difference_vs_tosa.png
 python scripts/summarize_quant.py results/2026-10-28_tosa_quantization
 python scripts/plot_quant.py results/2026-10-28_tosa_quantization figures/quantization
 python scripts/summarize_latency.py results/2026-10-29_latency_compute figures/latency
+python scripts/analyze_quant_interaction.py results/2026-10-28_tosa_quantization results/2026-10-29_quant_interaction figures/quantization
 python -m pytest scripts/test_counting_rca.py
 ```
 
 - No token merge, ToMe and ToSA: `scripts/launch_eval.sh JOB RUNTIME DATA EXPERIMENT OUTPUT dataset:variant:shard:num_shards:gpu ...` in a PBS job. `EXPERIMENT` is a folder name in `experiments/`. The protocol sets the model. The 7B runs used the script of commit `47e0f8b`, before this argument was added. The harness hash in the protocol is the same as that file.
 - Depth methods: `scripts/launch_relaxed_eval.sh` (job format `model:dataset:shard:num_shards:gpu`). The thresholds come from `scripts/relax_thresholds.py`.
-- Quantization: `scripts/launch_quant_eval.sh` (job format `model:precision:dataset:shard:num_shards:gpu`).
+- Quantization: `scripts/launch_quant_eval.sh` (job format `model:precision:dataset:shard:num_shards:gpu`). Repeat runs: `scripts/launch_quant_replicate.sh` (same format).
+- Speed: `scripts/launch_latency.sh JOB RUNTIME DATA EXPERIMENT OUTPUT GPU_INDEX`.
 - Depth maps: `scripts/launch_depth.sh`.

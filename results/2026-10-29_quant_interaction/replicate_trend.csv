@@ -1,0 +1,5 @@
+model,dataset,precision,runs,slope_pp_per_10pct_merged,ci95_low,ci95_high,p,n,p_holm
+0.5B,vqav2_count,vision-W8A8,3,0.039,-0.094,0.174,0.566041,1000,1.0
+0.5B,vqav2_count,vision-W4A16,3,-0.028,-0.211,0.156,0.763996,1000,1.0
+0.5B,vqav2_count,llm-W8A8,3,-0.056,-0.204,0.095,0.461578,1000,1.0
+0.5B,vqav2_count,llm-W4A16,3,0.414,0.141,0.692,0.003084,1000,0.012337

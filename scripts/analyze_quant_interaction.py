@@ -214,7 +214,8 @@ def main():
     ax.set_xticks([26 * r for r in r_values[1:]])
     ax.set_xlabel('Merged tokens m (of 729)')
     ax.set_ylabel('I(m), mean of 3 runs (pp)')
-    ax.set_title(f'LLaVA-OneVision-{model} · {DSNAME[dataset]} · 3 runs (dotted: each run)', fontsize=10)
+    scope = rp['replicate_scope']
+    ax.set_title(f'LLaVA-OneVision-{scope["model"]} · {DSNAME[scope["dataset"]]} · 3 runs (dotted: each run)', fontsize=10)
     ax.grid(alpha=0.3)
     ax.legend(fontsize=8, loc='lower right', ncol=2)
     fig.tight_layout()

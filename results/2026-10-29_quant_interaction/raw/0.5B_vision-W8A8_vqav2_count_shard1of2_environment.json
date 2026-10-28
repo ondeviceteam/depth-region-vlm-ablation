@@ -1,0 +1,86 @@
+{
+ "tag": "0.5B_vision-W8A8_vqav2_count_shard1of2",
+ "started_utc": "2026-10-28T19:56:38.824647+00:00",
+ "host": "ece-agpu5",
+ "gpu": "GPU-58e27bb8-6ee4-6920-934e-3cda615bb144",
+ "gpu_name": "NVIDIA A100-SXM4-80GB",
+ "pbs_job_id": "131000.ECE-util1",
+ "python": "3.11.15 (main, Jun 23 2026, 15:19:43) [Clang 22.1.3 ]",
+ "packages": {
+  "torch": "2.7.1+cu128",
+  "transformers": "4.44.2",
+  "numpy": "2.2.6",
+  "pillow": "11.3.0"
+ },
+ "protocol_sha256": "b1b84b2ed25e95a4aa63e27316a889228e387ca3306be55a3ccb49bf09e73766",
+ "quantized_linear_layers": 156,
+ "conditions": [
+  [
+   0,
+   1
+  ],
+  [
+   0,
+   2
+  ],
+  [
+   3,
+   1
+  ],
+  [
+   3,
+   2
+  ],
+  [
+   6,
+   1
+  ],
+  [
+   6,
+   2
+  ],
+  [
+   9,
+   1
+  ],
+  [
+   9,
+   2
+  ],
+  [
+   16,
+   1
+  ],
+  [
+   16,
+   2
+  ],
+  [
+   20,
+   1
+  ],
+  [
+   20,
+   2
+  ],
+  [
+   23,
+   1
+  ],
+  [
+   23,
+   2
+  ],
+  [
+   25,
+   1
+  ],
+  [
+   25,
+   2
+  ]
+ ],
+ "questions": 500,
+ "finished_utc": "2026-10-28T20:28:49.388650+00:00",
+ "new_rows": 8000
+}
