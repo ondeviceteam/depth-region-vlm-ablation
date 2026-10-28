@@ -17,9 +17,9 @@ import matplotlib.pyplot as plt  # noqa: E402
 plt.rcParams['font.family'] = ['Noto Sans CJK KR', 'DejaVu Sans']
 PRECISIONS = {'FP': ('black', 'o', '-'), 'vision-W8A8': ('#1f77b4', 's', '-'), 'vision-W4A16': ('#1f77b4', 's', '--'),
               'llm-W8A8': ('#d62728', '^', '-'), 'llm-W4A16': ('#d62728', '^', '--')}
-LABELS = {'FP': 'FP (양자화 없음)', 'vision-W8A8': '비전 W8A8', 'vision-W4A16': '비전 W4A16',
+LABELS = {'FP': 'FP (no quantization)', 'vision-W8A8': 'Vision W8A8', 'vision-W4A16': 'Vision W4A16',
           'llm-W8A8': 'LLM W8A8', 'llm-W4A16': 'LLM W4A16'}
-DATASETS = {'vqav2_count': ('VQAv2 counting', 'vqa_accuracy', 'VQA accuracy'), 'gqa': ('GQA 2,000문항', 'exact_match', 'Exact match')}
+DATASETS = {'vqav2_count': ('VQAv2 counting', 'vqa_accuracy', 'VQA accuracy'), 'gqa': ('GQA (2,000 questions)', 'exact_match', 'Exact match')}
 
 
 def main():
@@ -44,13 +44,13 @@ def main():
                 right.fill_between(x, [float(r['ci95_low']) for r in rows], [float(r['ci95_high']) for r in rows], color=color, alpha=0.12)
             right.axhline(0, color='gray', lw=1)
             for ax in (left, right):
-                ax.set_xlabel('병합한 토큰 비율 (%, 729개 기준)')
+                ax.set_xlabel('Merged tokens (% of 729)')
                 ax.grid(alpha=0.3)
                 ax.legend(fontsize=8)
             left.set_ylabel(f'{label} (%)')
-            left.set_title('점수')
-            right.set_ylabel('양자화 손실 (%p) = 양자화 − FP')
-            right.set_title('양자화 손실 (음영: 95% 신뢰구간)')
+            left.set_title('Score')
+            right.set_ylabel('Quantization loss (pp) = quantized − FP')
+            right.set_title('Quantization loss (band: 95% CI)')
             fig.suptitle(f'LLaVA-OneVision-{model} · ToSA · {title}')
             fig.tight_layout()
             path = out / f'{model.lower()}_{dataset}.png'

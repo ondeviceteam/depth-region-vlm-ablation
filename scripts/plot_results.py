@@ -16,8 +16,9 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt  # noqa: E402
 
 plt.rcParams['font.family'] = ['Noto Sans CJK KR', 'DejaVu Sans']
-METHODS = {'ToMe': ('#1f77b4', 'o'), 'ToSA': ('#ff7f0e', 's'),
-           'Depth-only': ('#2ca02c', '^'), 'Depth-RGB': ('#d62728', 'D')}
+# Categorical slots 1-4 of the validated dataviz palette, in fixed order; marker shape is the second cue.
+METHODS = {'ToMe': ('#2a78d6', 'o'), 'ToSA': ('#eb6834', 's'),
+           'Depth-only': ('#1baf7a', '^'), 'Depth-RGB': ('#eda100', 'D')}
 METRICS = {('vqav2_count', 'vqa_accuracy'): ('VQAv2 counting · VQA accuracy', '#9467bd', 'o'),
            ('vqav2_count', 'rca'): ('VQAv2 counting · RCA', '#8c564b', 's'),
            ('gqa', 'exact_match'): ('GQA · Exact match', '#17becf', '^')}
@@ -27,7 +28,7 @@ FIGURES = [('vqav2_count', 'vqa_accuracy', 'VQAv2 counting · VQA accuracy', 'co
 
 
 def curve(rows, dataset, method, metric):
-    # Every method starts from Token merge 없음 at 0% merged.
+    # Every method starts from "No token merge" at 0% merged.
     base = next(r for r in rows if r['dataset'] == dataset and r['method'] == 'Dense')
     points = sorted((100 * int(r['merged_tokens']) / 729, float(r[metric]))
                     for r in rows if r['dataset'] == dataset and r['method'] == method)
@@ -41,8 +42,8 @@ MODEL_NAMES = {'lmms-lab/llava-onevision-qwen2-7b-ov': 'LLaVA-OneVision-7B',
 def finish(ax, fig, rows, ylabel, title, path):
     strengths = sorted({(int(r['merged_tokens']), int(r['remaining_tokens'])) for r in rows})
     ax.set_xticks([100 * m / 729 for m, _ in strengths])
-    ax.set_xticklabels([f'{100 * m / 729:.1f}%\n({n}개 남음)' for m, n in strengths], fontsize=9)
-    ax.set_xlabel('병합한 토큰 비율 (729개 기준)')
+    ax.set_xticklabels([f'{100 * m / 729:.1f}%\n({n} left)' for m, n in strengths], fontsize=9)
+    ax.set_xlabel('Merged tokens (% of 729)')
     ax.set_ylabel(ylabel)
     ax.set_title(title)
     ax.grid(alpha=0.3)
@@ -71,11 +72,11 @@ def main():
         fig, ax = plt.subplots(figsize=(7, 4.5))
         for (dataset, metric), (label, color, m) in METRICS.items():
             ax.plot(*curve(rows, dataset, method, metric), color=color, marker=m, lw=1.8, ms=6, label=label)
-        finish(ax, fig, rows, '점수 (%)', f'{model} · {method}', out / f'method_{method.lower()}.png')
+        finish(ax, fig, rows, 'Score (%)', f'{model} · {method}', out / f'method_{method.lower()}.png')
     for dataset, metric, title, name in FIGURES:
         base = next(r for r in rows if r['dataset'] == dataset and r['method'] == 'Dense')
         fig, ax = plt.subplots(figsize=(7, 4.5))
-        ax.axhline(float(base[metric]), color='gray', ls='--', lw=1, label='Token merge 없음')
+        ax.axhline(float(base[metric]), color='gray', ls='--', lw=1, label='No token merge')
         for method, (color, marker) in METHODS.items():
             ax.plot(*curve(rows, dataset, method, metric), color=color, marker=marker, lw=1.8, ms=6, label=method)
         finish(ax, fig, rows, f'{title.split(" · ")[1]} (%)', f'{model} · {title}', out / name)

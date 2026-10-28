@@ -1,0 +1,181 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 378" role="img" aria-label="Three panels. ToMe can merge a near-object token with a background token. ToSA makes this less likely. The Depth methods merge only inside one depth region and keep the edge tokens.">
+<style>
+svg { --bg:#fcfcfb; --far:#dde6f0; --near:#f4dcb4; --ink:#0b0b0b; --ink2:#52514e; --line:#2a78d6; --bad:#d03b3b; }
+@media (prefers-color-scheme: dark) { svg { --bg:#1a1a19; --far:#2b3644; --near:#4d3c22; --ink:#f0efec; --ink2:#c3c2b7; --line:#6da7ec; --bad:#e66767; } }
+.m-bg { fill: var(--bg); }
+.m-far { fill: var(--far); }
+.m-near { fill: var(--near); }
+.m-keep { fill: none; stroke: var(--ink); stroke-width: 1.5; stroke-dasharray: 3 2; }
+.m-region { fill: none; stroke: var(--ink); stroke-width: 2; }
+.m-ok { stroke: var(--line); stroke-width: 3; stroke-linecap: round; }
+.m-bad { stroke: var(--bad); stroke-width: 3; stroke-linecap: round; }
+.m-no { stroke: var(--ink2); stroke-width: 2; stroke-dasharray: 4 3; }
+.m-dot-ok { fill: var(--line); } .m-dot-bad { fill: var(--bad); } .m-dot-no { fill: var(--ink2); }
+.m-x { stroke: var(--bad); stroke-width: 2.5; fill: none; stroke-linecap: round; }
+.m-title { fill: var(--ink); font: 600 15px system-ui, -apple-system, "Segoe UI", sans-serif; }
+.m-cap { fill: var(--ink2); font: 12.5px system-ui, -apple-system, "Segoe UI", sans-serif; }
+.m-leg { fill: var(--ink2); font: 12px system-ui, -apple-system, "Segoe UI", sans-serif; }
+</style>
+<rect class="m-bg" x="0" y="0" width="760" height="378" rx="10"/>
+<text class="m-title" x="29" y="28">ToMe</text>
+<rect class="m-far" x="29" y="44" width="30" height="30" rx="4"/>
+<rect class="m-far" x="62" y="44" width="30" height="30" rx="4"/>
+<rect class="m-far" x="95" y="44" width="30" height="30" rx="4"/>
+<rect class="m-far" x="128" y="44" width="30" height="30" rx="4"/>
+<rect class="m-far" x="161" y="44" width="30" height="30" rx="4"/>
+<rect class="m-far" x="194" y="44" width="30" height="30" rx="4"/>
+<rect class="m-far" x="29" y="77" width="30" height="30" rx="4"/>
+<rect class="m-near" x="62" y="77" width="30" height="30" rx="4"/>
+<rect class="m-near" x="95" y="77" width="30" height="30" rx="4"/>
+<rect class="m-near" x="128" y="77" width="30" height="30" rx="4"/>
+<rect class="m-far" x="161" y="77" width="30" height="30" rx="4"/>
+<rect class="m-far" x="194" y="77" width="30" height="30" rx="4"/>
+<rect class="m-far" x="29" y="110" width="30" height="30" rx="4"/>
+<rect class="m-near" x="62" y="110" width="30" height="30" rx="4"/>
+<rect class="m-near" x="95" y="110" width="30" height="30" rx="4"/>
+<rect class="m-near" x="128" y="110" width="30" height="30" rx="4"/>
+<rect class="m-far" x="161" y="110" width="30" height="30" rx="4"/>
+<rect class="m-far" x="194" y="110" width="30" height="30" rx="4"/>
+<rect class="m-far" x="29" y="143" width="30" height="30" rx="4"/>
+<rect class="m-near" x="62" y="143" width="30" height="30" rx="4"/>
+<rect class="m-near" x="95" y="143" width="30" height="30" rx="4"/>
+<rect class="m-near" x="128" y="143" width="30" height="30" rx="4"/>
+<rect class="m-far" x="161" y="143" width="30" height="30" rx="4"/>
+<rect class="m-far" x="194" y="143" width="30" height="30" rx="4"/>
+<rect class="m-far" x="29" y="176" width="30" height="30" rx="4"/>
+<rect class="m-near" x="62" y="176" width="30" height="30" rx="4"/>
+<rect class="m-near" x="95" y="176" width="30" height="30" rx="4"/>
+<rect class="m-near" x="128" y="176" width="30" height="30" rx="4"/>
+<rect class="m-far" x="161" y="176" width="30" height="30" rx="4"/>
+<rect class="m-far" x="194" y="176" width="30" height="30" rx="4"/>
+<rect class="m-far" x="29" y="209" width="30" height="30" rx="4"/>
+<rect class="m-far" x="62" y="209" width="30" height="30" rx="4"/>
+<rect class="m-far" x="95" y="209" width="30" height="30" rx="4"/>
+<rect class="m-far" x="128" y="209" width="30" height="30" rx="4"/>
+<rect class="m-far" x="161" y="209" width="30" height="30" rx="4"/>
+<rect class="m-far" x="194" y="209" width="30" height="30" rx="4"/>
+<line class="m-ok" x1="176" y1="59" x2="209" y2="59"/>
+<circle class="m-dot-ok" cx="176" cy="59" r="4"/><circle class="m-dot-ok" cx="209" cy="59" r="4"/>
+<line class="m-ok" x1="44" y1="224" x2="77" y2="224"/>
+<circle class="m-dot-ok" cx="44" cy="224" r="4"/><circle class="m-dot-ok" cx="77" cy="224" r="4"/>
+<line class="m-bad" x1="143" y1="125" x2="176" y2="125"/>
+<circle class="m-dot-bad" cx="143" cy="125" r="4"/><circle class="m-dot-bad" cx="176" cy="125" r="4"/>
+<line class="m-bad" x1="44" y1="158" x2="77" y2="158"/>
+<circle class="m-dot-bad" cx="44" cy="158" r="4"/><circle class="m-dot-bad" cx="77" cy="158" r="4"/>
+<text class="m-cap" x="29" y="264">Merges tokens with similar</text>
+<text class="m-cap" x="29" y="281">features. A merge can cross</text>
+<text class="m-cap" x="29" y="298">an object edge.</text>
+<text class="m-title" x="279" y="28">ToSA</text>
+<rect class="m-far" x="279" y="44" width="30" height="30" rx="4"/>
+<rect class="m-far" x="312" y="44" width="30" height="30" rx="4"/>
+<rect class="m-far" x="345" y="44" width="30" height="30" rx="4"/>
+<rect class="m-far" x="378" y="44" width="30" height="30" rx="4"/>
+<rect class="m-far" x="411" y="44" width="30" height="30" rx="4"/>
+<rect class="m-far" x="444" y="44" width="30" height="30" rx="4"/>
+<rect class="m-far" x="279" y="77" width="30" height="30" rx="4"/>
+<rect class="m-near" x="312" y="77" width="30" height="30" rx="4"/>
+<rect class="m-near" x="345" y="77" width="30" height="30" rx="4"/>
+<rect class="m-near" x="378" y="77" width="30" height="30" rx="4"/>
+<rect class="m-far" x="411" y="77" width="30" height="30" rx="4"/>
+<rect class="m-far" x="444" y="77" width="30" height="30" rx="4"/>
+<rect class="m-far" x="279" y="110" width="30" height="30" rx="4"/>
+<rect class="m-near" x="312" y="110" width="30" height="30" rx="4"/>
+<rect class="m-near" x="345" y="110" width="30" height="30" rx="4"/>
+<rect class="m-near" x="378" y="110" width="30" height="30" rx="4"/>
+<rect class="m-far" x="411" y="110" width="30" height="30" rx="4"/>
+<rect class="m-far" x="444" y="110" width="30" height="30" rx="4"/>
+<rect class="m-far" x="279" y="143" width="30" height="30" rx="4"/>
+<rect class="m-near" x="312" y="143" width="30" height="30" rx="4"/>
+<rect class="m-near" x="345" y="143" width="30" height="30" rx="4"/>
+<rect class="m-near" x="378" y="143" width="30" height="30" rx="4"/>
+<rect class="m-far" x="411" y="143" width="30" height="30" rx="4"/>
+<rect class="m-far" x="444" y="143" width="30" height="30" rx="4"/>
+<rect class="m-far" x="279" y="176" width="30" height="30" rx="4"/>
+<rect class="m-near" x="312" y="176" width="30" height="30" rx="4"/>
+<rect class="m-near" x="345" y="176" width="30" height="30" rx="4"/>
+<rect class="m-near" x="378" y="176" width="30" height="30" rx="4"/>
+<rect class="m-far" x="411" y="176" width="30" height="30" rx="4"/>
+<rect class="m-far" x="444" y="176" width="30" height="30" rx="4"/>
+<rect class="m-far" x="279" y="209" width="30" height="30" rx="4"/>
+<rect class="m-far" x="312" y="209" width="30" height="30" rx="4"/>
+<rect class="m-far" x="345" y="209" width="30" height="30" rx="4"/>
+<rect class="m-far" x="378" y="209" width="30" height="30" rx="4"/>
+<rect class="m-far" x="411" y="209" width="30" height="30" rx="4"/>
+<rect class="m-far" x="444" y="209" width="30" height="30" rx="4"/>
+<line class="m-ok" x1="426" y1="59" x2="459" y2="59"/>
+<circle class="m-dot-ok" cx="426" cy="59" r="4"/><circle class="m-dot-ok" cx="459" cy="59" r="4"/>
+<line class="m-ok" x1="294" y1="224" x2="327" y2="224"/>
+<circle class="m-dot-ok" cx="294" cy="224" r="4"/><circle class="m-dot-ok" cx="327" cy="224" r="4"/>
+<line class="m-ok" x1="360" y1="125" x2="360" y2="158"/>
+<circle class="m-dot-ok" cx="360" cy="125" r="4"/><circle class="m-dot-ok" cx="360" cy="158" r="4"/>
+<line class="m-bad" x1="393" y1="92" x2="426" y2="92"/>
+<circle class="m-dot-bad" cx="393" cy="92" r="4"/><circle class="m-dot-bad" cx="426" cy="92" r="4"/>
+<text class="m-cap" x="279" y="264">Adds depth and position to</text>
+<text class="m-cap" x="279" y="281">the feature similarity. A merge</text>
+<text class="m-cap" x="279" y="298">across an edge is less likely.</text>
+<text class="m-title" x="529" y="28">Depth-only, Depth-RGB</text>
+<rect class="m-far" x="529" y="44" width="30" height="30" rx="4"/>
+<rect class="m-far" x="562" y="44" width="30" height="30" rx="4"/>
+<rect class="m-far" x="595" y="44" width="30" height="30" rx="4"/>
+<rect class="m-far" x="628" y="44" width="30" height="30" rx="4"/>
+<rect class="m-far" x="661" y="44" width="30" height="30" rx="4"/>
+<rect class="m-far" x="694" y="44" width="30" height="30" rx="4"/>
+<rect class="m-far" x="529" y="77" width="30" height="30" rx="4"/>
+<rect class="m-near" x="562" y="77" width="30" height="30" rx="4"/>
+<rect class="m-keep" x="565" y="80" width="24" height="24" rx="3"/>
+<rect class="m-near" x="595" y="77" width="30" height="30" rx="4"/>
+<rect class="m-keep" x="598" y="80" width="24" height="24" rx="3"/>
+<rect class="m-near" x="628" y="77" width="30" height="30" rx="4"/>
+<rect class="m-keep" x="631" y="80" width="24" height="24" rx="3"/>
+<rect class="m-far" x="661" y="77" width="30" height="30" rx="4"/>
+<rect class="m-far" x="694" y="77" width="30" height="30" rx="4"/>
+<rect class="m-far" x="529" y="110" width="30" height="30" rx="4"/>
+<rect class="m-near" x="562" y="110" width="30" height="30" rx="4"/>
+<rect class="m-keep" x="565" y="113" width="24" height="24" rx="3"/>
+<rect class="m-near" x="595" y="110" width="30" height="30" rx="4"/>
+<rect class="m-near" x="628" y="110" width="30" height="30" rx="4"/>
+<rect class="m-keep" x="631" y="113" width="24" height="24" rx="3"/>
+<rect class="m-far" x="661" y="110" width="30" height="30" rx="4"/>
+<rect class="m-far" x="694" y="110" width="30" height="30" rx="4"/>
+<rect class="m-far" x="529" y="143" width="30" height="30" rx="4"/>
+<rect class="m-near" x="562" y="143" width="30" height="30" rx="4"/>
+<rect class="m-keep" x="565" y="146" width="24" height="24" rx="3"/>
+<rect class="m-near" x="595" y="143" width="30" height="30" rx="4"/>
+<rect class="m-near" x="628" y="143" width="30" height="30" rx="4"/>
+<rect class="m-keep" x="631" y="146" width="24" height="24" rx="3"/>
+<rect class="m-far" x="661" y="143" width="30" height="30" rx="4"/>
+<rect class="m-far" x="694" y="143" width="30" height="30" rx="4"/>
+<rect class="m-far" x="529" y="176" width="30" height="30" rx="4"/>
+<rect class="m-near" x="562" y="176" width="30" height="30" rx="4"/>
+<rect class="m-keep" x="565" y="179" width="24" height="24" rx="3"/>
+<rect class="m-near" x="595" y="176" width="30" height="30" rx="4"/>
+<rect class="m-keep" x="598" y="179" width="24" height="24" rx="3"/>
+<rect class="m-near" x="628" y="176" width="30" height="30" rx="4"/>
+<rect class="m-keep" x="631" y="179" width="24" height="24" rx="3"/>
+<rect class="m-far" x="661" y="176" width="30" height="30" rx="4"/>
+<rect class="m-far" x="694" y="176" width="30" height="30" rx="4"/>
+<rect class="m-far" x="529" y="209" width="30" height="30" rx="4"/>
+<rect class="m-far" x="562" y="209" width="30" height="30" rx="4"/>
+<rect class="m-far" x="595" y="209" width="30" height="30" rx="4"/>
+<rect class="m-far" x="628" y="209" width="30" height="30" rx="4"/>
+<rect class="m-far" x="661" y="209" width="30" height="30" rx="4"/>
+<rect class="m-far" x="694" y="209" width="30" height="30" rx="4"/>
+<rect class="m-region" x="560" y="75" width="100" height="133" rx="6"/>
+<line class="m-ok" x1="676" y1="59" x2="709" y2="59"/>
+<circle class="m-dot-ok" cx="676" cy="59" r="4"/><circle class="m-dot-ok" cx="709" cy="59" r="4"/>
+<line class="m-ok" x1="544" y1="224" x2="577" y2="224"/>
+<circle class="m-dot-ok" cx="544" cy="224" r="4"/><circle class="m-dot-ok" cx="577" cy="224" r="4"/>
+<line class="m-ok" x1="610" y1="125" x2="610" y2="158"/>
+<circle class="m-dot-ok" cx="610" cy="125" r="4"/><circle class="m-dot-ok" cx="610" cy="158" r="4"/>
+<line class="m-no" x1="643" y1="125" x2="676" y2="125"/>
+<circle class="m-dot-no" cx="643" cy="125" r="4"/><circle class="m-dot-no" cx="676" cy="125" r="4"/>
+<path class="m-x" d="M653.5 119L665.5 131M665.5 119L653.5 131"/>
+<text class="m-cap" x="529" y="264">Merges only inside one depth</text>
+<text class="m-cap" x="529" y="281">region. Edge tokens stay</text>
+<text class="m-cap" x="529" y="298">and are not merged.</text>
+<rect class="m-near" x="29" y="345" width="14" height="14" rx="3"/><text class="m-leg" x="49" y="356">Near object</text>
+<rect class="m-far" x="141" y="345" width="14" height="14" rx="3"/><text class="m-leg" x="161" y="356">Background</text>
+<line class="m-ok" x1="251" y1="352" x2="273" y2="352"/><text class="m-leg" x="279" y="356">Merge</text>
+<line class="m-bad" x1="335" y1="352" x2="357" y2="352"/><text class="m-leg" x="363" y="356">Merge across an edge</text>
+<rect class="m-far" x="513" y="345" width="14" height="14" rx="3"/><rect class="m-keep" x="515" y="347" width="10" height="10" rx="2"/><text class="m-leg" x="533" y="356">Kept token</text>
+</svg>

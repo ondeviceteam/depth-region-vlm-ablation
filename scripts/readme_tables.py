@@ -40,12 +40,12 @@ def main():
         for keep in keeps:
             cell = {r['method']: r for r in data if r['nominal_keep_ratio'] == keep}
             merged, remaining = int(cell['ToMe']['merged_tokens']), int(cell['ToMe']['remaining_tokens'])
-            print(f'### {TITLE[dataset]} · {merged}개 병합 ({100 * merged / 729:.1f}% 병합, 729 → {remaining}개 남음)\n')
-            print('| 방법 | ' + ' | '.join(c[1] for c in columns) + ' | 실행 성공 |')
+            print(f'### {TITLE[dataset]} · {merged} tokens merged ({100 * merged / 729:.1f}% of 729, {remaining} tokens left)\n')
+            print('| Method | ' + ' | '.join(c[1] for c in columns) + ' | Completed |')
             print('|---|' + '---:|' * (len(columns) + 1))
             best = {m: max(float(cell[x][m]) for x in METHODS) for m, _ in columns}
             n = base['n']
-            print(f'| *Token merge 없음* | ' + ' | '.join(f"*{float(base[m]):.2f}*" for m, _ in columns) + f' | {base["completed"]}/{n} |')
+            print(f'| *No token merge* | ' + ' | '.join(f"*{float(base[m]):.2f}*" for m, _ in columns) + f' | {base["completed"]}/{n} |')
             for method in METHODS:
                 r = cell[method]
                 values = [f'**{float(r[m]):.2f}**' if float(r[m]) == best[m] else f'{float(r[m]):.2f}' for m, _ in columns]
