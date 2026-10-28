@@ -66,6 +66,22 @@ pp = percentage points.
 - **ToSA and ToMe:** on VQAv2 counting, ToSA is higher at most merge levels (+4 to +8 pp). On GQA, the difference is small or not clear.
 - All methods completed all questions.
 
+## Speed and compute
+
+The full report is in `docs/latency_and_compute.md`.
+
+![Time to first token and FLOPs against merged tokens, 7B and 0.5B](figures/latency/cost_vs_merge.png)
+
+| Item | 7B | 0.5B |
+|---|---|---|
+| FLOPs | Same for all four methods. 650 merged: 18% of No token merge. | Same for all four methods. 650 merged: 32% of No token merge. |
+| Fastest method | ToMe: 1.78 times faster than No token merge at 650 merged | No method is faster than No token merge |
+| ToSA, with the depth model | 0.71 to 0.95 times: slower than No token merge | 0.43 to 0.44 times |
+| Depth methods − ToSA | Depth-only +80 to +88 ms. Depth-RGB +156 to +312 ms. | Depth-only +82 to +90 ms. Depth-RGB +158 to +313 ms. |
+
+- The time is time to first token on one A100, batch size 1, median of 600 answers.
+- The Depth methods are slow because of region and merge-plan work in the research code. This work is not in the FLOPs.
+
 ## Test setup
 
 | Item | Value |
@@ -479,7 +495,9 @@ This page does not show numbers from these experiments.
 | `experiments/2026-10-28_depth_relaxed/`, `results/2026-10-28_depth_relaxed/` | Protocol, raw answers and scores of Depth-only and Depth-RGB: `summary.csv` (scores), `paired_differences.csv` (difference from ToSA and ToMe with 95% interval), `consistency.csv` (same answers as the previous experiment). The name part "relaxed" separates these files from the previous experiment. |
 | `datasets/relaxed_boundary_thresholds.json` | Edge threshold for each image and merge level |
 | `experiments/2026-10-28_tosa_quantization/`, `results/2026-10-28_tosa_quantization/` | Protocol, raw answers, scores (`scores.csv`), quantization loss (`quant_loss.csv`), primary tests (`interaction.csv`) and repeat runs of the quantization experiment |
-| `figures/` | Figures: `summary/` (difference from ToSA), `7b/` and `0.5b/` (score for each merge level), `quantization/` |
+| `docs/latency_and_compute.md` | Report of time, memory and FLOPs for each method and merge level |
+| `experiments/2026-10-29_latency_compute/`, `results/2026-10-29_latency_compute/` | Protocol, raw time and FLOPs rows, and summary CSV files of the speed measurement |
+| `figures/` | Figures: `summary/` (difference from ToSA), `7b/` and `0.5b/` (score for each merge level), `quantization/`, `latency/` |
 | `scripts/` | Code for data, depth maps, inference, scores and figures |
 
 You can make all tables and figures again from the raw answers:
@@ -498,6 +516,7 @@ done
 python scripts/plot_difference.py $X figures/summary/difference_vs_tosa.png
 python scripts/summarize_quant.py results/2026-10-28_tosa_quantization
 python scripts/plot_quant.py results/2026-10-28_tosa_quantization figures/quantization
+python scripts/summarize_latency.py results/2026-10-29_latency_compute figures/latency
 python -m pytest scripts/test_counting_rca.py
 ```
 

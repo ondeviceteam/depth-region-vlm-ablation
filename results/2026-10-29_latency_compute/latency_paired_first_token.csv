@@ -1,0 +1,17 @@
+model,merged_tokens,comparison,difference_ms,ci95_low,ci95_high,questions
+0.5B,156,Depth-only - ToSA,89.61,89.45,89.8,200
+0.5B,156,Depth-RGB - ToSA,157.5,157.2,157.74,200
+0.5B,338,Depth-only - ToSA,84.35,84.03,84.65,200
+0.5B,338,Depth-RGB - ToSA,212.38,212.13,212.68,200
+0.5B,520,Depth-only - ToSA,82.39,82.26,82.69,200
+0.5B,520,Depth-RGB - ToSA,269.78,269.37,270.07,200
+0.5B,650,Depth-only - ToSA,82.12,81.94,82.24,200
+0.5B,650,Depth-RGB - ToSA,312.73,312.53,312.99,200
+7B,156,Depth-only - ToSA,87.82,87.56,88.07,200
+7B,156,Depth-RGB - ToSA,156.33,156.16,156.59,200
+7B,338,Depth-only - ToSA,82.68,82.32,82.98,200
+7B,338,Depth-RGB - ToSA,211.61,211.4,211.92,200
+7B,520,Depth-only - ToSA,80.38,80.08,80.63,200
+7B,520,Depth-RGB - ToSA,269.33,269.02,269.62,200
+7B,650,Depth-only - ToSA,80.18,79.91,80.4,200
+7B,650,Depth-RGB - ToSA,311.91,311.6,312.04,200

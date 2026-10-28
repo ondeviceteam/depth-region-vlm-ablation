@@ -7,6 +7,8 @@ RESULTS_DIR (results/2026-10-29_latency_compute) contains raw/ written by run_la
 Outputs in RESULTS_DIR:
   latency_summary.csv  median / 90th percentile end-to-end time, median of each stage, tokens, memory, speedup
   latency_paired.csv   Depth method - ToSA end-to-end time, paired by question, with 95% bootstrap interval
+  latency_paired_first_token.csv  the same comparison for time to first token (added after the first look at the data:
+                       answer length changes the number of decode steps, so end-to-end time mixes speed and answer length)
   flops_summary.csv    mean GFLOPs of the vision tower, projector and language model
   depth_summary.csv    depth model time and GFLOPs
 Figures in FIGURE_DIR: latency_breakdown.png, cost_vs_merge.png
@@ -62,6 +64,9 @@ def main():
     for r in rows:
         r['end_to_end_ms'] = r['prep_ms'] + r['generate_ms']
         r['other_ms'] = r['generate_ms'] - r['vision_ms'] - r['projector_ms'] - r['prefill_ms'] - r['decode_ms']
+        # Time to first token: everything before the decode loop. It does not depend on the answer length.
+        r['first_token_ms'] = r['end_to_end_ms'] - r['decode_ms']
+        r['decode_ms_per_step'] = r['decode_ms'] / r['decode_steps'] if r['decode_steps'] else float('nan')
         r['merged'] = 0 if r['method'] == 'Dense' else strength[str(r['nominal_keep_ratio'])]['merged']
     depth_total = [d['preprocess_ms'] + d['forward_ms'] + d['post_ms'] for d in depth_rows]
     depth_ms = float(np.median(depth_total))
@@ -73,6 +78,7 @@ def main():
     summary = []
     for model in protocol['models']:
         dense = float(np.median([r['end_to_end_ms'] for r in cells[(model, 'Dense', 0)]]))
+        dense_ftt = float(np.median([r['first_token_ms'] for r in cells[(model, 'Dense', 0)]]))
         for (m, method, merged), cell in sorted(cells.items(), key=lambda kv: (kv[0][0], METHODS.index(kv[0][1]), kv[0][2])):
             if m != model:
                 continue
@@ -84,6 +90,11 @@ def main():
                        end_to_end_ms_median=round(float(np.median(e2e)), 2), end_to_end_ms_p90=round(float(np.percentile(e2e, 90)), 2),
                        speedup_vs_no_merge=round(dense / float(np.median(e2e)), 3),
                        end_to_end_with_depth_ms_median=round(float(np.median(e2e)) + (depth_ms if uses_depth else 0), 2))
+            ftt = [r['first_token_ms'] for r in cell]
+            row.update(first_token_ms_median=round(float(np.median(ftt)), 2), first_token_ms_p90=round(float(np.percentile(ftt, 90)), 2),
+                       first_token_speedup_vs_no_merge=round(dense_ftt / float(np.median(ftt)), 3),
+                       first_token_with_depth_ms_median=round(float(np.median(ftt)) + (depth_ms if uses_depth else 0), 2),
+                       decode_ms_per_step_median=round(float(np.nanmedian([r['decode_ms_per_step'] for r in cell])), 2))
             for stage in ['image_ms', 'prep_ms', 'vision_ms', 'projector_ms', 'prefill_ms', 'decode_ms', 'other_ms']:
                 row[f'{stage}_median'] = round(float(np.median([r[stage] for r in cell])), 2)
             row.update(llm_input_tokens_median=int(np.median([r['llm_input_tokens'] for r in cell])),
@@ -97,19 +108,22 @@ def main():
         text[(r['model'], r['question_id'])].add(r['llm_input_tokens'] - r['vision_output_tokens'])
     assert all(len(v) == 1 for v in text.values()), 'LLM input differs from prompt + image tokens'
 
-    paired = []
-    for model in protocol['models']:
-        for merged in sorted({s['merged'] for s in strength.values()}):
-            per_q = defaultdict(lambda: defaultdict(list))
-            for method in ['ToSA', 'Depth-only', 'Depth-RGB']:
-                for r in cells[(model, method, merged)]:
-                    per_q[method][(r['dataset'], r['question_id'])].append(r['end_to_end_ms'])
-            for method in ['Depth-only', 'Depth-RGB']:
-                keys = sorted(per_q['ToSA'])
-                diff = [np.mean(per_q[method][k]) - np.mean(per_q['ToSA'][k]) for k in keys]
-                d, lo, hi = bootstrap_median(diff)
-                paired.append(dict(model=model, merged_tokens=merged, comparison=f'{method} - ToSA', difference_ms=round(d, 2),
-                                   ci95_low=round(lo, 2), ci95_high=round(hi, 2), questions=len(keys)))
+    def pair(metric):
+        out_rows = []
+        for model in protocol['models']:
+            for merged in sorted({s['merged'] for s in strength.values()}):
+                per_q = defaultdict(lambda: defaultdict(list))
+                for method in ['ToSA', 'Depth-only', 'Depth-RGB']:
+                    for r in cells[(model, method, merged)]:
+                        per_q[method][(r['dataset'], r['question_id'])].append(r[metric])
+                for method in ['Depth-only', 'Depth-RGB']:
+                    keys = sorted(per_q['ToSA'])
+                    diff = [np.mean(per_q[method][k]) - np.mean(per_q['ToSA'][k]) for k in keys]
+                    d, lo, hi = bootstrap_median(diff)
+                    out_rows.append(dict(model=model, merged_tokens=merged, comparison=f'{method} - ToSA', difference_ms=round(d, 2),
+                                         ci95_low=round(lo, 2), ci95_high=round(hi, 2), questions=len(keys)))
+        return out_rows
+    paired, paired_ftt = pair('end_to_end_ms'), pair('first_token_ms')
 
     fcells = defaultdict(list)
     for r in flops:
@@ -135,6 +149,7 @@ def main():
                           peak_memory_mb_median=round(float(np.median([d['peak_memory_mb'] for d in depth_rows])), 1))]
     write(out / 'latency_summary.csv', summary)
     write(out / 'latency_paired.csv', paired)
+    write(out / 'latency_paired_first_token.csv', paired_ftt)
     write(out / 'flops_summary.csv', flop_rows)
     write(out / 'depth_summary.csv', depth_summary)
 
@@ -168,15 +183,15 @@ def main():
     fig.savefig(figures / 'latency_breakdown.png', dpi=160)
     plt.close(fig)
 
-    # Figure 2: end-to-end time and FLOPs against merged tokens.
+    # Figure 2: time to first token and FLOPs against merged tokens. Time to first token does not depend on answer length.
     fig, axes = plt.subplots(2, 2, figsize=(11, 7.6), sharex=True)
     for col, model in enumerate(['7B', '0.5B']):
         for method in METHODS[1:]:
             base = [s for s in summary if s['model'] == model and s['method'] == 'Dense'][0]
-            mine = sorted((s['merged_tokens'], s['end_to_end_ms_median'], s['end_to_end_with_depth_ms_median'])
+            mine = sorted((s['merged_tokens'], s['first_token_ms_median'], s['first_token_with_depth_ms_median'])
                           for s in summary if s['model'] == model and s['method'] == method)
             xs = [0] + [p[0] for p in mine]
-            axes[0][col].plot(xs, [base['end_to_end_ms_median']] + [p[1] for p in mine], color=COLOR[method],
+            axes[0][col].plot(xs, [base['first_token_ms_median']] + [p[1] for p in mine], color=COLOR[method],
                               marker=MARKER[method], lw=2, ms=6, label=method)
             if method != 'ToMe':
                 axes[0][col].plot(xs[1:], [p[2] for p in mine], color=COLOR[method], marker=MARKER[method], lw=1.2, ms=5,
@@ -186,14 +201,14 @@ def main():
             axes[1][col].plot([0] + [p[0] for p in fm], [fb] + [p[1] for p in fm], color=COLOR[method], marker=MARKER[method],
                               lw=2, ms=6, label=method)
         axes[0][col].set_title(names[model], fontsize=11)
-        axes[0][col].set_ylabel('Median time per answer (ms)')
+        axes[0][col].set_ylabel('Median time to first token (ms)')
         axes[1][col].set_ylabel('GFLOPs per answer (matmul)')
         axes[1][col].set_xlabel('Merged tokens (of 729)')
         for ax in (axes[0][col], axes[1][col]):
             ax.set_xticks([0, 156, 338, 520, 650])
             ax.grid(alpha=0.3)
             ax.set_ylim(bottom=0)
-    axes[0][0].legend(fontsize=9, loc='lower left')
+    axes[0][0].legend(fontsize=9, loc='upper left')
     fig.suptitle('Solid line: model only. Dashed line: with the depth model (ToSA and Depth methods).', fontsize=10)
     fig.tight_layout()
     fig.savefig(figures / 'cost_vs_merge.png', dpi=160)
